@@ -220,7 +220,7 @@ def _process_elements(net, elements, squeeze=True):
         for edge in _edges:
             if prev_edge is not None:
                 connections = _get_connections(prev_edge, edge, _flow_direction)
-                connections = [(c.getFromLane().getIndex(), c.getToLane().getIndex()) for c in connections]
+                connections = [(_c.getFromLane().getIndex(), _c.getToLane().getIndex()) for _c in connections]
 
                 diff = 0
                 for connection in connections:

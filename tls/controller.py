@@ -77,7 +77,7 @@ step = 0
 while step < 100:
     traci.simulationStep()
     step += 1
-time.sleep(10)
+# time.sleep(10)
 
 #########################
 from simulation import Simulation
