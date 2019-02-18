@@ -1,5 +1,6 @@
 import numpy as np
 from pprint import pprint
+from string import Template
 
 
 class Observer:
@@ -20,13 +21,32 @@ class Observer:
         self.skeletons = skeletons
 
     @staticmethod
-    def _get_junction_shape( junction):
-        # _, lane_id = junction[c.Position.BOTTOM]['elements']['lanes'][0][0]  # FixMe: Won't work if not intersection
-        # lane_width = self.simulation.lane.getWidth(lane_id)  # Assume that all lanes have the same width
+    def _get_junction_polygon(junction):
         lengths = {position: len(junction[position]['elements']['lanes']) for position in c.Position}
-        width = max(lengths[position] for position in c.Position.horizontal())
-        height = max(lengths[position] for position in c.Position.vertical())
-        return height, width
+        minh, maxh = sorted(lengths[position] for position in c.Position.horizontal())
+        minw, maxw = sorted(lengths[position] for position in c.Position.vertical())
+
+        rotate = {
+            c.Position.LEFT: (1, -1), c.Position.RIGHT: (-1, 1),
+            c.Position.TOP: (-1, -1), c.Position.BOTTOM: (1, 1),
+        }
+        center = ((c.MESH_SIZE - 1) // 2, (c.MESH_SIZE - 1) // 2)
+
+        result = {}
+        for position in c.Position:
+            result[position] = (
+                np.add(
+                    center,
+                    np.multiply(
+                        rotate[position],
+                        (lengths[position] // 2 + (maxh - minh) // 2, 1 + (maxw // 2))
+                        if position in c.Position.horizontal() else
+                        (1 + (maxh // 2), lengths[position] // 2 + (maxw - minw) // 2))))
+        return result
+
+    @staticmethod
+    def _clamp(*args, **kwargs):
+        return [np.maximum(kwargs['min'], np.minimum(kwargs['max'], arg)) for arg in args]
 
     def get_state(self, trafficlight_id, display=True):
         r"""Produces a tensor obtained by staking matrices each of which represent current state
@@ -42,19 +62,22 @@ class Observer:
         pprint(trafficlight_skeleton)
 
         # ToDO: Recursion vs. Queue for processing nested junctions?
-        center = (15, 15)  # Revise
-        rotate = (1, -1)
+        polygon = self._get_junction_polygon(trafficlight_skeleton)
 
-        shape = self._get_junction_shape(trafficlight_skeleton)
-        bottom_left = np.add(center, np.multiply(rotate, np.add(np.floor_divide(shape, 2), np.remainder(shape, 2))))
+        rotate = (-1, 1)
+        b_offset = (0, 1)
 
         # Specify in which direction the cursor is moving
-        steps = [(-1, 0), (0, 1), (1, 0), (0, -1)]
-        positions = c.Position
+        steps = {
+            c.Position.LEFT: (-1, 0), c.Position.RIGHT: (1, 0),
+            c.Position.TOP: (0, 1), c.Position.BOTTOM: (0, -1),
+        }
 
-        for position, step in zip(positions, steps):
+        for position in c.Position:
+            step, cursor = steps[position], polygon[position]
             direction, elements = trafficlight_skeleton[position].values()
 
+            # FixMe: Cursor doesn't move in the right direction
             for lanes in elements['lanes']:
                 for offset, flow_direction, lane in lanes:
                     for vehicle in self.simulation.lane.getLastStepVehicleIDs(lane):
@@ -63,34 +86,75 @@ class Observer:
                         if flow_direction:
                             distance = self.simulation.lane.getLength(lane) - distance
 
-                        # Find idx of the cell relative to the cursor position
-                        idx = np.int64((offset + distance) // c.MESH_PARTITIONING_STEP)
+                        # Find idx of the cell on the grid
+                        idx = np.add(cursor, np.multiply(
+                            np.int64((offset + distance) // c.MESH_PARTITIONING_STEP),
+                            np.multiply(rotate, np.flip(step, axis=0))))
 
                         # Ensure that the car is within the observation area
-                        if not 0 <= idx < c.MESH_SIZE:
+                        if not np.array_equal(idx, self._clamp(idx, min=0, max=c.MESH_SIZE - 1)[0]):
                             continue
-
-                        # Find idx of the cell on the grid
-                        idx = np.add(bottom_left, np.multiply(np.flip(step, axis=0), idx))
                         mesh[tuple(idx)] = 1
 
                     # Save lanes to the color layer
-                    from_ = np.int64(offset // c.MESH_PARTITIONING_STEP)
-                    to_ = np.int64((offset + self.simulation.lane.getLength(lane)) // c.MESH_PARTITIONING_STEP)
+                    from_, to_ = self._clamp(
+                        np.add(cursor, np.multiply(
+                            np.int64(offset // c.MESH_PARTITIONING_STEP),
+                            np.multiply(rotate, np.flip(step, axis=0)))),
+                        np.add(cursor, np.multiply(
+                            np.int64((offset + self.simulation.lane.getLength(lane)) // c.MESH_PARTITIONING_STEP),
+                            np.multiply(rotate, np.flip(step, axis=0)))),
+                        min=0, max=c.MESH_SIZE - 1)
 
-                    # ToDo: Try to subtract 'to_' from 'bottom_left[1]'
-                    if step.index(0):
-                        from_, to_ = bottom_left[1] + min(from_, to_), bottom_left[1] + max(from_, to_)
-                        color[bottom_left[0], from_:min(to_, c.MESH_SIZE - 1)] = 1
-                    print(f'from {from_} to {to_}')
-                    print(bottom_left)
-                    print(offset, flow_direction, lane)
-                bottom_left += step
-            break
+                    tmp = np.column_stack((from_, to_))
+                    idx = (tmp[0], slice(*np.add(b_offset, np.sort(tmp[1]))))\
+                        if position in c.Position.horizontal() else (slice(*np.add(b_offset, np.sort(tmp[0]))), tmp[1])
 
-        np.set_printoptions(threshold=np.nan, linewidth=np.nan)
-        print(color)
+                    color[idx] = 1 if flow_direction else -1
+                cursor += step
 
-    def _print_mesh(self, mesh):
-        pass
+        # Save junction to the color layer
+        # tmp = np.column_stack(list(polygon.values()))
+        # tmp = np.column_stack((np.amax(tmp, axis=1), np.amin(tmp, axis=1)))
+        #
+        # idx = (slice(*np.add(np.sort(tmp[0]), b_offset[::-1])), slice(*np.add(np.sort(tmp[1]), b_offset[::-1])))
+        # color[idx] = 2
 
+        # Save car positions to the color layer
+        color[np.where(mesh == 1)] = 9
+
+        self._print_mesh(color)
+
+    @staticmethod
+    def _print_mesh(mesh):
+        _TURQUOISE = Template('\x1b[0;36;40m$str\x1b[0m')
+        _WHITE = Template('\x1b[0;30;46m$str\x1b[0m')
+        _GRAY = Template('\x1b[0;30;47m$str\x1b[0m')
+        _PURPLE = Template('\x1b[0;30;45m$str\x1b[0m')
+
+        for row in mesh:
+            sep = ''
+
+            row_string = ''
+            for d in row:
+                d_string = sep
+
+                if not sep:
+                    sep = ' '
+
+                if d == 9:
+                    d_string += '1.'
+
+                    row_string += _PURPLE.substitute(str=d_string)
+                else:
+                    d_string += '0.'
+
+                    if d == 1:
+                        row_string += _TURQUOISE.substitute(str=d_string)
+                    elif d == -1:
+                        row_string += _WHITE.substitute(str=d_string)
+                    # elif d == 2:
+                    #     row_string += _GRAY.substitute(str=d_string)
+                    else:
+                        row_string += d_string
+            print(f'[{row_string}]')

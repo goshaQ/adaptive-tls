@@ -121,7 +121,7 @@ def get_junction_type(node):
     def is_unregulated_intersection(_node=node):
         # ToDo: Revise?
         if node.getType() == 'priority':
-            if any(c.getDirection() in ['r', 'l'] for c in node.getConnections()):
+            if any(_c.getDirection() in ['r', 'l'] for _c in node.getConnections()):
                 return True
 
     args = {}
@@ -225,7 +225,7 @@ def _process_elements(net, elements, squeeze=True):
                 diff = 0
                 for connection in connections:
                     from_lane, to_lane = map(bool, connection)
-                    diff += from_lane - to_lane
+                    diff += to_lane - from_lane if _flow_direction else from_lane - to_lane
 
                 shift += diff
                 _offset += prev_edge.getLength()
