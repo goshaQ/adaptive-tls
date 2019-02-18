@@ -30,18 +30,20 @@ class Observer:
             c.Position.LEFT: (1, -1), c.Position.RIGHT: (-1, 1),
             c.Position.TOP: (-1, -1), c.Position.BOTTOM: (1, 1),
         }
+
         center = ((c.MESH_SIZE - 1) // 2, (c.MESH_SIZE - 1) // 2)
+        hoffset, voffset = np.int64((maxw % 2, 1))
 
         result = {}
         for position in c.Position:
-            result[position] = (
-                np.add(
-                    center,
-                    np.multiply(
-                        rotate[position],
-                        (lengths[position] // 2 + (maxh - minh) // 2, 1 + (maxw // 2))
-                        if position in c.Position.horizontal() else
-                        (1 + (maxh // 2), lengths[position] // 2 + (maxw - minw) // 2))))
+            if position in c.Position.horizontal():
+                result[position] = (
+                    np.add(center, np.multiply(rotate[position], (lengths[position] // 2, hoffset + maxw // 2))))
+                hoffset = 1
+            else:
+                result[position] = (
+                    np.add(center, np.multiply(rotate[position], (voffset + maxh // 2, lengths[position] // 2))))
+                voffset = maxh % 2
         return result
 
     @staticmethod
@@ -122,7 +124,6 @@ class Observer:
 
         # Save car positions to the color layer
         color[np.where(mesh == 1)] = 9
-
         self._print_mesh(color)
 
     @staticmethod
@@ -147,7 +148,7 @@ class Observer:
 
                     row_string += _PURPLE.substitute(str=d_string)
                 else:
-                    d_string += '0.'
+                    d_string += str(abs(d)).rstrip('0')
 
                     if d == 1:
                         row_string += _TURQUOISE.substitute(str=d_string)
