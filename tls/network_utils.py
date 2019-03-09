@@ -1,4 +1,5 @@
 import json
+
 import constants as c
 
 from queue import deque
@@ -6,6 +7,11 @@ from collections import defaultdict
 
 
 def get_positioned_junction(net, junction):
+    r"""
+    Note: This method is pure heuristic, so there is no guarantee that it will return
+    always properly positioned junction.
+    """
+
     ext_bottom_left = ext_bottom_right = ext_top_left = ext_top_right = None
     junction_shape = junction.getShape()
     junction_center = junction.getCoord()
@@ -31,7 +37,10 @@ def get_positioned_junction(net, junction):
 
     tmp = defaultdict(list)
     for edge in junction.getOutgoing() + junction.getIncoming():
-        first_point = edge.getShape()[0]
+        # Select the second point from the border of the junction, mb improve later
+        idx = 1 if edge in junction.getOutgoing() else -2
+
+        first_point = edge.getShape()[idx]
         diff_x, diff_y = first_point[0] - junction_center[0], first_point[1] - junction_center[1]
 
         if slope[0] * diff_x < diff_y < slope[2] * diff_x:  # Find edges on the left side
@@ -69,7 +78,8 @@ def get_junction_type(node):
 
     def is_connection(_node=node):
         if (len(_node.getIncoming()) == len(_node.getOutgoing()) == 1
-                and _node.getIncoming()[0].getToNode() == _node.getOutgoing()[0].getFromNode()):
+                and _node.getIncoming()[0].getToNode() == _node.getOutgoing()[0].getFromNode()
+                and _node.getType() == 'priority'):
             return True
 
     def is_channelized_right_turn(_node=node):
@@ -79,6 +89,7 @@ def get_junction_type(node):
         def get_to_or_from_node(x, condition):
             return x.getFromNode() if condition else x.getToNode()
 
+        # if len(node.getIncoming()) == len(node.getOutgoing()): return
         is_ending = len(node.getIncoming()) > len(node.getOutgoing())
         try:
             main = None
@@ -89,7 +100,8 @@ def get_junction_type(node):
                     break
 
             complementary = None
-            preceding = next(iter(get_incoming_or_outgoing(main, not is_ending)))
+
+            preceding = next(iter(get_incoming_or_outgoing(main, is_ending)))
             preceding_to = get_incoming_or_outgoing(preceding, is_ending)
             for e in preceding_to:
                 if e != main:
@@ -113,18 +125,25 @@ def get_junction_type(node):
         except AttributeError:
             pass  # Assumption was wrong; pretend we didn't do it
 
+    def is_dead_end(_node=node):
+        # ToDo: Revise?
+        if _node.getType() == 'unknown':
+            return True
+
     def is_regulated_intersection(_node=node):
         # ToDo: Revise?
-        if node.getType() == 'traffic_light':
+        if _node.getType() == 'traffic_light':
             return True
 
     def is_unregulated_intersection(_node=node):
         # ToDo: Revise?
-        if node.getType() == 'priority':
-            if any(_c.getDirection() in ['r', 'l'] for _c in node.getConnections()):
+        if _node.getType() == 'priority':
+            if any(_c.getDirection() in ['r', 'l'] for _c in _node.getConnections()):
                 return True
 
     args = {}
+    if is_dead_end():
+        return c.Junction.DEAD_END, args
     if is_connection():
         return c.Junction.CONNECTION, args
     elif is_channelized_right_turn():
@@ -147,6 +166,7 @@ def extract_tl_skeleton(net, trafficlight):
     node = net.getNode(trafficlight.getID())
     queued_nodes = deque()
 
+    # TODO: It is OK that we store `node` in the queue, however we could get rid of it
     tl_skeleton = dict()
     queued_nodes.append((tl_skeleton, node))
 
@@ -154,54 +174,71 @@ def extract_tl_skeleton(net, trafficlight):
         skeleton, node = queued_nodes.pop()
         skeleton['id'] = node.getID()
 
-        voffset, hoffset = skeleton.get('offset', [0, 0])  # ['offset'] if 'offset' in skeleton else [0, 0]
+        voffset, hoffset = skeleton.get('offset', (0, 0))
         positioned_edges = get_positioned_junction(net, node)
 
+        upstream_changed = False
+
+        if 'segments' not in skeleton:
+            skeleton['segments'] = {}
+        else:
+            # ToDo: Potential bug
+            position, edges = next(iter(skeleton['segments'].items()))
+            while not any(edge in positioned_edges[position] for edge in edges):
+                keys = list(positioned_edges.keys())
+                values = list(positioned_edges.values())
+
+                for key, val in zip(keys[1:]+keys[:1], values):
+                    positioned_edges[key] = val
+                upstream_changed = not upstream_changed
+            skeleton['segments'][position] = None
+
         for position, edges in positioned_edges.items():
-            if not edges:
+            if not edges\
+                    or position in skeleton['segments']:
+                print(position, skeleton['segments'])
                 continue
 
-            road = dict()
+            segment = dict()
 
-            if None in edges:  # Probably I don't need this
-                idx = edges.index(None)
-                road['direction'] = c.Direction.INCOMING if idx else c.Direction.OUTGOING
-            else:
-                road['direction'] = c.Direction.BIDIRECTIONAL
-            road['elements'] = {}
-
-            upstream = position in c.Position.upper_corner()
+            upstream = position in c.Position.upper_corner() and not upstream_changed
             horizontal = position in c.Position.horizontal()
 
             for edge_id in edges:
                 if edge_id is not None:
                     edge = net.getEdge(edge_id)
 
-                    length = (voffset if horizontal else hoffset) + edge.getLength()
+                    length = (hoffset if horizontal else voffset) + edge.getLength()
                     seq = [edge_id]
 
                     while length < c.MESH_PARTITIONING_STEP * c.MESH_SIZE / 2:
                         adj_node = get_adjacent_node(edge, upstream)
                         node_type, _ = get_junction_type(adj_node)
+
                         if node_type is c.Junction.CONNECTION:
                             edge = get_adjacent_edges(adj_node, upstream)[0]
                             length += edge.getLength()
                             seq.append(edge.getID())
                         elif node_type is c.Junction.UNREGULATED_INTERSECTION\
-                                and 'junction' not in road['elements']:
+                                and 'junction' not in segment:
                             junction = dict()
-                            junction['offset'] = [length, voffset] if horizontal else [hoffset, length]
+                            junction['offset'] = (voffset, length) if horizontal else (length, hoffset)
 
-                            road['elements']['junction'] = junction
+                            # Indicate the segment that should be avoided
+                            junction['segments'] = {}
+                            junction['segments'][c.Position.invert(position)] = edges
+
+                            segment['junction'] = junction
                             queued_nodes.append((junction, adj_node))
+                            break
                         else:  # Someone else's responsibility
                             break
 
-                    road['elements']['upstream' if upstream else 'downstream'] = seq
+                    segment['upstream' if upstream else 'downstream'] = seq
                 upstream = not upstream
 
-            road['elements'] = _process_elements(net, road['elements'])
-            skeleton[position] = road
+            segment = _process_elements(net, segment)
+            skeleton['segments'][position] = segment
     return tl_skeleton
 
 

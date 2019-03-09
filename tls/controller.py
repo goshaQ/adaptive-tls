@@ -87,7 +87,7 @@ conn = traci.getConnection()  # conn.trafficlight, etc.
 sim = Simulation(conn)
 
 observer = Observer(sim, skeletons, constants)
-observer.get_state('cluster_298135838_49135231')
+observer.get_state('cluster_290051904_49145925')
 
 #########################
 
