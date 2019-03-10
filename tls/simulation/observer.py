@@ -43,7 +43,7 @@ class Observer:
             height = width = 0
 
             for position, segment in junction['segments'].items():
-                lengths[position] = len(segment['lanes'])
+                lengths[position] = sum([lanes is None or lanes[0][0] == 0 for lanes in segment['lanes']])
                 if position in c.Position.horizontal():
                     height = max(height, lengths[position])
                 else:
@@ -93,8 +93,13 @@ class Observer:
         if offset is not None:
             center = np.add(center, offset)
 
-        if junction_id == '648538922':
-            height, width = width, height
+        # print(f'{junction_id} height={height}; width={width}')
+        # # FIXME: why so?
+        # if junction_id == '648538922':
+        #     print(f'height={height}; width={width}')
+        #     height, width = width, height
+        #     print(f'height={height}; width={width}')
+        #     print(f'center={center}')
 
         result = {}
         for position in lengths:
@@ -176,19 +181,35 @@ class Observer:
 
                         # ToDo: There is no need to create color layer every time
                         # Save lanes to the color layer
-                        from_, to_ = self._clamp(
+
+                        # FIXME: When line is outside of the area, it might be moved within
+                        
+                        from_, to_ = (
                             np.add(cursor, np.multiply(
                                 np.int64(offset // c.MESH_PARTITIONING_STEP),
                                 np.multiply(rotate, np.flip(step, axis=0)))),
                             np.add(cursor, np.multiply(
                                 np.int64((offset + self.simulation.lane.getLength(lane)) // c.MESH_PARTITIONING_STEP),
                                 np.multiply(rotate, np.flip(step, axis=0)))),
-                            min=0, max=c.MESH_SIZE - 1)
+                        )
+                        if not np.array_equal(from_, self._clamp(from_, min=0, max=c.MESH_SIZE - 1))\
+                                and not np.array_equal(to_, self._clamp(to_, min=0, max=c.MESH_SIZE - 1)):
+                            continue
+                        from_, to_ = self._clamp(from_, to_, min=0, max=c.MESH_SIZE-1)
+                        # from_, to_ = self._clamp(
+                        #     np.add(cursor, np.multiply(
+                        #         np.int64(offset // c.MESH_PARTITIONING_STEP),
+                        #         np.multiply(rotate, np.flip(step, axis=0)))),
+                        #     np.add(cursor, np.multiply(
+                        #         np.int64((offset + self.simulation.lane.getLength(lane)) // c.MESH_PARTITIONING_STEP),
+                        #         np.multiply(rotate, np.flip(step, axis=0)))),
+                        #     min=0, max=c.MESH_SIZE-1)  # max+1 to avoid moving the lane from outside
 
                         tmp = np.column_stack((from_, to_))
                         idx = ((tmp[0], slice(*np.add(b_offset, np.sort(tmp[1]))))
                                if position in c.Position.horizontal() else
                                (slice(*np.add(b_offset, np.sort(tmp[0]))), tmp[1]))
+
                         color[idx] = 1 if flow_direction else -1
                     color[(15, 15)] = 2
                     cursor += step
@@ -213,6 +234,9 @@ class Observer:
                             (np.floor(np.divide(junction_shape, 2)),
                              np.floor(np.divide((max_lane_length, 0) if position in c.Position.vertical() else (0, max_lane_length), c.MESH_PARTITIONING_STEP)),
                              np.floor(np.divide(neigh_junction_shape, 2)))))))
+                    if position == c.Position.BOTTOM:
+                        center_offset1 = np.subtract(center_offset1,
+                                                     b_offset[::-1])
                     print('position', position, 'step', step, 'offset', center_offset1)
                     print(self._get_junction_polygon2(neigh_junction['id']))
 

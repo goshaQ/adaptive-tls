@@ -89,7 +89,6 @@ def get_junction_type(node):
         def get_to_or_from_node(x, condition):
             return x.getFromNode() if condition else x.getToNode()
 
-        # if len(node.getIncoming()) == len(node.getOutgoing()): return
         is_ending = len(node.getIncoming()) > len(node.getOutgoing())
         try:
             main = None
@@ -98,10 +97,11 @@ def get_junction_type(node):
                 if is_regulated_intersection(to_node):  # Replace?
                     main = e
                     break
+            if main is None: return False
 
             complementary = None
 
-            preceding = next(iter(get_incoming_or_outgoing(main, is_ending)))
+            preceding = next(iter(get_incoming_or_outgoing(main, not is_ending)))
             preceding_to = get_incoming_or_outgoing(preceding, is_ending)
             for e in preceding_to:
                 if e != main:
@@ -112,22 +112,27 @@ def get_junction_type(node):
             complementary_list = [complementary]
             while is_connection(complementary_to):
                 complementary_to = next(iter(get_incoming_or_outgoing(complementary_to, is_ending)))
+                # FIXME: Instead an edge need to be appended to the list
                 complementary_list.append(complementary_to)
 
                 complementary_to = get_to_or_from_node(complementary_to, is_ending)
 
             for e in get_incoming_or_outgoing(complementary_to, not is_ending):
                 from_node = get_to_or_from_node(e, not is_ending)  # Find the node we expect to be traffic light
-                if from_node == get_to_or_from_node(main, is_ending):  # check whether our expectation is met
+                if from_node == get_to_or_from_node(main, is_ending):  # Check whether our expectation is met
                     args['is_ending'] = is_ending
                     args['complementary'] = complementary_list
                     return True
         except AttributeError:
             pass  # Assumption was wrong; pretend we didn't do it
 
+    def is_unknown(_node=node):
+        if _node.getType() not in ['traffic_light', 'priority', 'dead_end']:
+            return True
+
     def is_dead_end(_node=node):
         # ToDo: Revise?
-        if _node.getType() == 'unknown':
+        if _node.getType() == 'dead_end':
             return True
 
     def is_regulated_intersection(_node=node):
@@ -142,9 +147,11 @@ def get_junction_type(node):
                 return True
 
     args = {}
-    if is_dead_end():
+    if is_unknown():
+        return c.Junction.UNKNOWN, args
+    elif is_dead_end():
         return c.Junction.DEAD_END, args
-    if is_connection():
+    elif is_connection():
         return c.Junction.CONNECTION, args
     elif is_channelized_right_turn():
         return c.Junction.CHANNELIZED_RIGHT_TURN, args
@@ -152,7 +159,7 @@ def get_junction_type(node):
         return c.Junction.REGULATED_INTERSECTION, args
     elif is_unregulated_intersection():
         return c.Junction.UNREGULATED_INTERSECTION, args
-    else:
+    else:  # The type of junction is not recognized, just for now
         return c.Junction.UNKNOWN, args
 
 
@@ -163,16 +170,16 @@ def extract_tl_skeleton(net, trafficlight):
     def get_adjacent_edges(_node, _flag):
         return _node.getIncoming() if _flag else _node.getOutgoing()
 
-    node = net.getNode(trafficlight.getID())
-    queued_nodes = deque()
+    tl_skeleton = {
+        'id': trafficlight.getID(),
+    }
 
-    # TODO: It is OK that we store `node` in the queue, however we could get rid of it
-    tl_skeleton = dict()
-    queued_nodes.append((tl_skeleton, node))
+    queued_skeletons = deque()
+    queued_skeletons.append(tl_skeleton)
 
-    while queued_nodes:
-        skeleton, node = queued_nodes.pop()
-        skeleton['id'] = node.getID()
+    while queued_skeletons:
+        skeleton = queued_skeletons.pop()
+        node = net.getNode(skeleton['id'])
 
         voffset, hoffset = skeleton.get('offset', (0, 0))
         positioned_edges = get_positioned_junction(net, node)
@@ -182,9 +189,9 @@ def extract_tl_skeleton(net, trafficlight):
         if 'segments' not in skeleton:
             skeleton['segments'] = {}
         else:
-            # ToDo: Potential bug
-            position, edges = next(iter(skeleton['segments'].items()))
-            while not any(edge in positioned_edges[position] for edge in edges):
+            # TODO: Is there a better approach?
+            position, seq = next(iter(skeleton['segments'].items()))
+            while not any(edge in positioned_edges[position] for edge in seq):
                 keys = list(positioned_edges.keys())
                 values = list(positioned_edges.values())
 
@@ -194,10 +201,7 @@ def extract_tl_skeleton(net, trafficlight):
             skeleton['segments'][position] = None
 
         for position, edges in positioned_edges.items():
-            if not edges\
-                    or position in skeleton['segments']:
-                print(position, skeleton['segments'])
-                continue
+            if not edges or position in skeleton['segments']: continue
 
             segment = dict()
 
@@ -215,21 +219,25 @@ def extract_tl_skeleton(net, trafficlight):
                         adj_node = get_adjacent_node(edge, upstream)
                         node_type, _ = get_junction_type(adj_node)
 
+                        # TODO: Handle c.Junction.CHANNELIZED_RIGHT_TURN
                         if node_type is c.Junction.CONNECTION:
                             edge = get_adjacent_edges(adj_node, upstream)[0]
                             length += edge.getLength()
                             seq.append(edge.getID())
                         elif node_type is c.Junction.UNREGULATED_INTERSECTION\
                                 and 'junction' not in segment:
-                            junction = dict()
-                            junction['offset'] = (voffset, length) if horizontal else (length, hoffset)
+                            junction = {
+                                'id': adj_node.getID(),
+                                'offset': (voffset, length) if horizontal else (length, hoffset),
 
-                            # Indicate the segment that should be avoided
-                            junction['segments'] = {}
-                            junction['segments'][c.Position.invert(position)] = edges
+                                # Indicate the segment that should be avoided
+                                'segments': {
+                                    c.Position.invert(position): seq,
+                                },
+                            }
 
                             segment['junction'] = junction
-                            queued_nodes.append((junction, adj_node))
+                            queued_skeletons.append(junction)
                             break
                         else:  # Someone else's responsibility
                             break
