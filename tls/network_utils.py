@@ -131,7 +131,6 @@ def get_junction_type(node):
             return True
 
     def is_dead_end(_node=node):
-        # ToDo: Revise?
         if _node.getType() == 'dead_end':
             return True
 

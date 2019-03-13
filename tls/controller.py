@@ -64,7 +64,6 @@ mesh = np.zeros((constants.MESH_SIZE, constants.MESH_SIZE))
 problematic_trafficlights = [
     'cluster_290051912_298136030_648538909',
     'cluster_2511020102_2511020103_290051922_298135886',
-    'cluster_2511020106_49297289',
 ]
 
 skeletons = {}
@@ -88,7 +87,7 @@ conn = traci.getConnection()  # conn.trafficlight, etc.
 sim = Simulation(conn)
 
 observer = Observer(sim, skeletons, constants)
-observer.get_state('cluster_290051904_49145925')
+# observer.get_state('cluster_298135838_49135231')
 
 #########################
 
