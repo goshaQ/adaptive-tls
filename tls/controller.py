@@ -74,7 +74,7 @@ for trafficlight in net.getTrafficLights():
     skeletons[trafficlight.getID()] = trafficlight_skeleton
 
 step = 0
-while step < 100:
+while step < 400:
     traci.simulationStep()
     step += 1
 # time.sleep(10)
@@ -87,7 +87,7 @@ conn = traci.getConnection()  # conn.trafficlight, etc.
 sim = Simulation(conn)
 
 observer = Observer(sim, skeletons, constants)
-# observer.get_state('cluster_298135838_49135231')
+observer.get_state('cluster_298135838_49135231')
 
 #########################
 
