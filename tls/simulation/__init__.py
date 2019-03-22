@@ -10,5 +10,5 @@ class Simulation:
     def __getattr__(self, name):
         return getattr(self.connection, name)
 
-    def make_simulation_step(self):
-        pass
+    def make_simulation_step(self, until=2):
+        self.connection.simulationStep(step=until)
