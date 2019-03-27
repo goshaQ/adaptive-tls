@@ -1,4 +1,6 @@
 import numpy as np
+import constants as c
+
 from string import Template
 from collections import deque, defaultdict
 
@@ -11,11 +13,7 @@ class Observer:
         skeletons (dict{id: skeleton}): internal representation of trafficlights within the road network.
     """
 
-    c = None  # Shortcomings of Python's import system
-
-    def __init__(self, simulation, skeletons, constants):
-        global c
-        c = constants
+    def __init__(self, simulation, skeletons):
 
         self.simulation = simulation
         self.skeletons = skeletons
@@ -241,7 +239,7 @@ class Observer:
 
                             # Find idx of the cell on the grid
                             idx = np.add(cursor, np.multiply(
-                                np.int64((offset + distance) // c.MESH_PARTITIONING_STEP),
+                                np.int64(np.round((offset + distance) / c.MESH_PARTITIONING_STEP)),
                                 np.multiply(rotate, np.flip(step, axis=0))))
 
                             # Ensure that the car is within the observation area

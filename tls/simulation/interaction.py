@@ -16,6 +16,6 @@ class Interaction:
 
         throughput = 0
         for segment in CONFIGURATION[trafficlight_id].values():
-            for loop_id in segment['stopbar_detectors']:
+            for loop_id in segment['departure_detectors']:
                 throughput += self.simulation.inductionloop.getLastStepVehicleNumber(loop_id)
         return throughput

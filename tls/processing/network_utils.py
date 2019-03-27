@@ -1,5 +1,4 @@
 import json
-
 import constants as c
 
 from queue import deque

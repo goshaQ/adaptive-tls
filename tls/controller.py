@@ -1,13 +1,13 @@
 import os
 import sys
-import ast
 import argparse
 import time
 
 import numpy as np
 
 import constants
-import network_utils
+from processing import network_utils
+from pprint import pprint
 
 if 'SUMO_HOME' in os.environ:
     tools = os.path.join(os.environ['SUMO_HOME'], 'tools')
@@ -41,7 +41,8 @@ curr_phase_idx = int(tt.getPhase(some_id))
 curr_phase = tt.getCompleteRedYellowGreenDefinition(some_id)[curr_program_idx].getPhases()[curr_phase_idx]
 curr_phase = '{' + ', '.join([': '.join(["'" + val.replace(' ', '') + "'" for val in entry.split(':')])
                               for entry in str(curr_phase).split('\n')[:-1]]) + '}'
-curr_phase = ast.literal_eval(curr_phase)  # WTF?
+curr_phase = eval(curr_phase)  # WTF?
+pprint(curr_phase)
 
 # ToDo: Think about how to find all lanes on which movement is allowed
 
@@ -83,34 +84,33 @@ from simulation.interaction import Interaction
 conn = traci.getConnection()  # conn.trafficlight, etc.
 sim = Simulation(conn)
 
-observer = Observer(sim, skeletons, constants)
+observer = Observer(sim, skeletons)
 interaction = Interaction(sim)
+
+some_id = 'cluster_298135838_49135231'
+# traci.trafficlight.setPhase(some_id, 2)
+# traci.trafficlight.setPhaseDuration(some_id, 1000)
 
 throughput = 0
 measurements = []
 for time_ in range(0, 2000, 5):
     sim.simulationStep(time_)
 
-    throughput += interaction.get_trafficlight_throughput('cluster_298135838_49135231')
+    throughput += interaction.get_trafficlight_throughput(some_id)
     if time_ == 780:
         measurements.append((time_ / 60, throughput))
 
         print(f'Current time: {time_}')
-        observer.get_state('cluster_298135838_49135231')
+        observer.get_state(some_id)
         throughput = 0
         break
 
-time.sleep(8)
-x, y = zip(*measurements)
-plt.plot(x, y)
+# x, y = zip(*measurements)
+# plt.plot(x, y)
 # plt.show()
 
-print(f'Total number of carse passed through the intersection: {sum(y)}')
+print(f'Total number of cars passed through the intersection: {sum(y)}')
 #########################
-
-def generate_routefile():
-    time_steps = 3600
-
 
 # some_id = '2511020105'
 # some_node = net.getNode(some_id)

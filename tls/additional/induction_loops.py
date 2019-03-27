@@ -8,12 +8,20 @@ CONFIGURATION = {
                 'E582',
                 'E779',
             ],
+            'departure_detectors': [
+                'E742',
+                'E79E',
+                'E039',
+            ],
         },
         'northside': {
             'stopbar_detectors': [
                 'EA7D',
                 'E56A',
             ],
+            'departure_detectors': [
+                'E5C1',
+            ]
         },
         'eastside': {
             'stopbar_detectors': [
@@ -22,12 +30,20 @@ CONFIGURATION = {
                 'E33A',
                 'E8B3',
                 'E877',
-            ]
+            ],
+            'departure_detectors': [
+                'E551',
+                'EC76',
+                'E7DC',
+            ],
         },
         'southside': {
             'stopbar_detectors': [
                 'E967',
                 'E967',
+            ],
+            'departure_detectors': [
+                'EBA7',
             ],
         },
     },
