@@ -74,6 +74,8 @@ for trafficlight in net.getTrafficLights():
     skeletons[trafficlight.getID()] = trafficlight_skeleton
 
 #########################
+import matplotlib.pyplot as plt
+
 from simulation import Simulation
 from simulation.observer import Observer
 from simulation.interaction import Interaction
@@ -85,18 +87,30 @@ observer = Observer(sim, skeletons, constants)
 interaction = Interaction(sim)
 
 throughput = 0
-for time in range(0, 400, 5):
-    sim.simulationStep(time)
+measurements = []
+for time_ in range(0, 2000, 5):
+    sim.simulationStep(time_)
 
     throughput += interaction.get_trafficlight_throughput('cluster_298135838_49135231')
-    if time % 50 == 0:
-        print(throughput)
+    if time_ == 780:
+        measurements.append((time_ / 60, throughput))
 
+        print(f'Current time: {time_}')
         observer.get_state('cluster_298135838_49135231')
         throughput = 0
+        break
 
+time.sleep(8)
+x, y = zip(*measurements)
+plt.plot(x, y)
+# plt.show()
 
+print(f'Total number of carse passed through the intersection: {sum(y)}')
 #########################
+
+def generate_routefile():
+    time_steps = 3600
+
 
 # some_id = '2511020105'
 # some_node = net.getNode(some_id)

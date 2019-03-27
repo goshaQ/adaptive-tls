@@ -1,7 +1,6 @@
 import numpy as np
-from pprint import pprint
 from string import Template
-from collections import deque
+from collections import deque, defaultdict
 
 
 class Observer:
@@ -46,6 +45,7 @@ class Observer:
 
     def _init_color_layers(self):
         self.color_layers = dict()
+        self.topologies = defaultdict(list)
 
         rotate = (-1, 1)
         b_offset = (0, 1)
@@ -57,6 +57,8 @@ class Observer:
             queued_junctions.append((skeleton, (0, 0)))
 
             while queued_junctions:
+                self.topologies[trafficlight_id].append(queued_junctions[-1])
+
                 junction, relative_offset = queued_junctions.pop()
                 junction_id = junction['id']
 
@@ -124,7 +126,7 @@ class Observer:
                                 (np.floor(np.divide(junction_shape, 2)),
                                  np.floor(np.divide(lane_shape, c.MESH_PARTITIONING_STEP)),
                                  np.floor(np.divide(neigh_junction_shape, 2)))))))
-                        if position == c.Position.BOTTOM:
+                        if position == c.Position.BOTTOM:  # FIXME: Because the center of the junction is shifted...
                             center_offset = np.subtract(center_offset,
                                                         b_offset[::-1])
 
@@ -214,19 +216,12 @@ class Observer:
         :return:
         """
 
-        trafficlight_skeleton = self.skeletons[trafficlight_id]
-        # pprint(trafficlight_skeleton)
+        topology = self.topologies[trafficlight_id]
 
         mesh = np.zeros((c.MESH_SIZE, c.MESH_SIZE))
-
         rotate = (-1, 1)
-        b_offset = (0, 1)
 
-        queued_junctions = deque()
-        queued_junctions.append((trafficlight_skeleton, (0, 0)))
-
-        while queued_junctions:
-            junction, relative_offset = queued_junctions.pop()
+        for junction, relative_offset in topology:
             junction_id = junction['id']
 
             polygon = self._get_junction_polygon2(junction_id, relative_offset)
@@ -252,35 +247,13 @@ class Observer:
                             # Ensure that the car is within the observation area
                             if not np.array_equal(idx, self._clamp(idx, min=0, max=c.MESH_SIZE - 1)):
                                 continue
+
                             mesh[tuple(idx)] = 1
+                    lane_length = lanes[-1][0] + self.simulation.lane.getLength(lanes[-1][2])
+                    if max_lane_length < lane_length:
+                        max_lane_length = lane_length
+
                     cursor += step
-
-                neigh_junction = segment.get('junction', None)
-                if neigh_junction is not None:
-                    neigh_junction['segments'][c.Position.invert(position)] = \
-                        {'lanes': [None] * len(segment['lanes'])}
-
-                    junction_shape = self._get_junction_shape(junction)['shape']
-                    neigh_junction_shape = self._get_junction_shape(neigh_junction)['shape']
-                    lane_shape = (
-                        (0, max_lane_length)
-                        if position in c.Position.horizontal()
-                        else (max_lane_length, 0)
-                    )
-
-                    center_offset = np.add(relative_offset, np.multiply(
-                        (step[::-1]
-                         if position in c.Position.horizontal()
-                         else np.negative(step[::-1])),
-                        np.int64(np.sum(
-                            (np.floor(np.divide(junction_shape, 2)),
-                             np.floor(np.divide(lane_shape, c.MESH_PARTITIONING_STEP)),
-                             np.floor(np.divide(neigh_junction_shape, 2)))))))
-                    if position == c.Position.BOTTOM:  # FIXME: Because the center of the junction is shifted...
-                        center_offset = np.subtract(center_offset,
-                                                    b_offset[::-1])
-
-                    queued_junctions.append((neigh_junction, center_offset))
 
         # Save car positions to the color layer
         if display:
