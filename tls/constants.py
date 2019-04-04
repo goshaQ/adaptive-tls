@@ -6,6 +6,15 @@ MESH_SIZE = 32
 # Length L of the cell in the grid; m
 MESH_PARTITIONING_STEP = 6
 
+# Duration T of the simulation step; s
+SIMULATION_STEP = 5
+
+# Minimum duration of a green light; s
+MIN_GREEN = 5
+
+# Duration of a yellow light; s
+YELLOW_TIME = 4
+
 
 class Direction(Enum):
     BIDIRECTIONAL = 0

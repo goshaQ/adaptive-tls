@@ -34,15 +34,14 @@ traci.start(cmd)
 
 trafficlight_id_list = tt.getIDList()
 
-some_id = 'cluster_290051904_49145925'
-curr_program_idx = int(tt.getProgram(some_id))
-curr_phase_idx = int(tt.getPhase(some_id))
-
-curr_phase = tt.getCompleteRedYellowGreenDefinition(some_id)[curr_program_idx].getPhases()[curr_phase_idx]
-curr_phase = '{' + ', '.join([': '.join(["'" + val.replace(' ', '') + "'" for val in entry.split(':')])
-                              for entry in str(curr_phase).split('\n')[:-1]]) + '}'
-curr_phase = eval(curr_phase)  # WTF?
-pprint(curr_phase)
+# some_id = 'cluster_290051904_49145925'
+# curr_program_idx = int(tt.getProgram(some_id))
+# curr_phase_idx = int(tt.getPhase(some_id))
+#
+# curr_phase = tt.getCompleteRedYellowGreenDefinition(some_id)[curr_program_idx].getPhases()[curr_phase_idx]
+# curr_phase = '{' + ', '.join([': '.join(["'" + val.replace(' ', '') + "'" for val in entry.split(':')])
+#                               for entry in str(curr_phase).split('\n')[:-1]]) + '}'
+# curr_phase = eval(curr_phase)  # WTF?
 
 # ToDo: Think about how to find all lanes on which movement is allowed
 
@@ -75,41 +74,34 @@ for trafficlight in net.getTrafficLights():
     skeletons[trafficlight.getID()] = trafficlight_skeleton
 
 #########################
-import matplotlib.pyplot as plt
-
-from simulation import Simulation
-from simulation.observer import Observer
-from simulation.interaction import Interaction
+from simulation.collaborator import Collaborator
+from simulation.trafficlight import Trafficlight
 
 conn = traci.getConnection()  # conn.trafficlight, etc.
-sim = Simulation(conn)
 
-observer = Observer(sim, skeletons)
-interaction = Interaction(sim)
+collaborator = Collaborator(traci.getConnection(), skeletons)
 
-some_id = 'cluster_298135838_49135231'
-# traci.trafficlight.setPhase(some_id, 2)
-# traci.trafficlight.setPhaseDuration(some_id, 1000)
+# trafficlight = Trafficlight(traci.getConnection(), 'cluster_298135838_49135231')
 
-throughput = 0
-measurements = []
+# throughput = 0
+# measurements = []
 for time_ in range(0, 2000, 5):
-    sim.simulationStep(time_)
+    collaborator.step()
 
-    throughput += interaction.get_trafficlight_throughput(some_id)
-    if time_ == 780:
-        measurements.append((time_ / 60, throughput))
-
-        print(f'Current time: {time_}')
-        observer.get_state(some_id)
-        throughput = 0
-        break
-
+#     throughput += interaction.get_throughput(some_id)
+#     if time_ == 780:
+#         measurements.append((time_ / 60, throughput))
+#
+#         print(f'Current time: {time_}')
+#         observer.get_state(some_id)
+#         throughput = 0
+#         break
+#
 # x, y = zip(*measurements)
 # plt.plot(x, y)
 # plt.show()
 
-print(f'Total number of cars passed through the intersection: {sum(y)}')
+# print(f'Total number of cars passed through the intersection: {sum(y)}')
 #########################
 
 # some_id = '2511020105'

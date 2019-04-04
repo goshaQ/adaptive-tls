@@ -9,13 +9,13 @@ class Observer:
     r"""Produces a snapshot of the current state of given trafficlight at any step of simulation.
 
     Arguments:
-        simulation (Simulation): the traffic simulation.
+        connection (Connection): connection to a TraCI-Server.
         skeletons (dict{id: skeleton}): internal representation of trafficlights within the road network.
     """
 
-    def __init__(self, simulation, skeletons):
+    def __init__(self, connection, skeletons):
 
-        self.simulation = simulation
+        self.connection = connection
         self.skeletons = skeletons
 
         self._buffered_shapes = {}
@@ -78,7 +78,7 @@ class Observer:
                                     np.multiply(rotate, np.flip(step, axis=0)))),
                                 np.add(cursor, np.multiply(
                                     np.int64(
-                                        (offset + self.simulation.lane.getLength(lane)) // c.MESH_PARTITIONING_STEP),
+                                        (offset + self.connection.lane.getLength(lane)) // c.MESH_PARTITIONING_STEP),
                                     np.multiply(rotate, np.flip(step, axis=0)))),
                             )
 
@@ -94,10 +94,10 @@ class Observer:
                                    (slice(*np.add(b_offset, np.sort(tmp[0]))), tmp[1]))
 
                             if junction_id == trafficlight_id:
-                                color[idx] = 1 if flow_direction else -1
+                                color[tuple(idx)] = 1 if flow_direction else -1
                             else:
-                                color[idx] = 3
-                        lane_length = lanes[-1][0] + self.simulation.lane.getLength(lanes[-1][2])
+                                color[tuple(idx)] = 3
+                        lane_length = lanes[-1][0] + self.connection.lane.getLength(lanes[-1][2])
                         if max_lane_length < lane_length:
                             max_lane_length = lane_length
 
@@ -139,7 +139,7 @@ class Observer:
 
                 offset = np.stack((b_offset, b_offset[::-1]) if flag else (b_offset[::-1], b_offset))
                 idx = [slice(*self._clamp(range_, min=0, max=c.MESH_SIZE)) for range_ in np.add(np.sort(tmp), offset)]
-                color[idx] = 2
+                color[tuple(idx)] = 2
 
             self.color_layers[trafficlight_id] = color
 
@@ -231,11 +231,11 @@ class Observer:
                     if lanes is None: break
 
                     for offset, flow_direction, lane in lanes:
-                        for vehicle in self.simulation.lane.getLastStepVehicleIDs(lane):
+                        for vehicle in self.connection.lane.getLastStepVehicleIDs(lane):
                             # Get position of a car on the road as distance from the trafficlight
-                            distance = self.simulation.vehicle.getLanePosition(vehicle)
+                            distance = self.connection.vehicle.getLanePosition(vehicle)
                             if flow_direction:
-                                distance = self.simulation.lane.getLength(lane) - distance
+                                distance = self.connection.lane.getLength(lane) - distance
 
                             # Find idx of the cell on the grid
                             idx = np.add(cursor, np.multiply(
@@ -247,7 +247,7 @@ class Observer:
                                 continue
 
                             mesh[tuple(idx)] = 1
-                    lane_length = lanes[-1][0] + self.simulation.lane.getLength(lanes[-1][2])
+                    lane_length = lanes[-1][0] + self.connection.lane.getLength(lanes[-1][2])
                     if max_lane_length < lane_length:
                         max_lane_length = lane_length
 
