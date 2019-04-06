@@ -1,5 +1,3 @@
-import itertools
-
 from .observer import Observer
 from .trafficlight import Trafficlight
 
@@ -10,8 +8,7 @@ from constants import (
 
 
 class Collaborator:
-    r"""...
-    Responsible for interaction with SUMO simulation using TraCI API.
+    r"""Responsible for interaction with SUMO simulation using TraCI API.
 
     Arguments:
         connection (Connection): connection to a TraCI-Server.
@@ -29,18 +26,31 @@ class Collaborator:
         self.simulation_time = 0
 
     def step(self):
-        action = self.agent_action_stub()
-        self.trafficlights['cluster_298135838_49135231'].set_next_phase(action)
+        r"""Applies actions of traffic light controller(s) and makes simulation step.
+
+        Note:
+            This method assumes that all traffic lights have the same yellow phase duration.
+            Probably, later this should changed so that traffic lights with different lengths
+            of the yellow signal will be supported.
+        """
+        # action = self.agent_action_stub()
+        # self.trafficlights['cluster_298135838_49135231'].set_next_phase(action)
 
         self.simulation_time += YELLOW_TIME
         self.connection.simulationStep(step=self.simulation_time)
+
         self.trafficlights['cluster_298135838_49135231'].update_phase()
-        self.simulation_time += 1
+
+        self.simulation_time += SIMULATION_STEP - YELLOW_TIME
         self.connection.simulationStep(step=self.simulation_time)
 
-    @staticmethod
-    def agent_action_stub():
-        return next(r) % 3
+    def get_observations(self):
+        r"""Collects observations from each intersection.
 
+        :return: dictionary with current observation for each intersection
+        """
 
-r = itertools.count()
+        observations = {}
+        for trafficlight_id in self.trafficlights:
+            observations[trafficlight_id] = self.observer.get_observation(trafficlight_id, display=False)
+        return observations

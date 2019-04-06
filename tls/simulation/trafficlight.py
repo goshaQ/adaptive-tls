@@ -36,6 +36,10 @@ class Trafficlight:
         return throughput
 
     def update_phase(self):
+        r"""Sends the signal to switch the trafficlight to the next phase.
+
+        :return: none.
+        """
         self.connection.trafficlight.setProgram(self.trafficlight_id, self.default_program)
         self.connection.trafficlight.setPhase(self.trafficlight_id, self.next_phase)
         self.connection.trafficlight.setPhaseDuration(self.trafficlight_id, SIMULATION_STEP)
@@ -46,18 +50,19 @@ class Trafficlight:
         r"""Decides whether it is time to switch to the next phase based on an agent action.
         If switch happens and duration of the current phase is less than minimum time on
         a phase, nothing happens. Otherwise, the trafficlight switches to the yellow phase
-        preceding to the next phase.
+        before switching to the next phase.
 
         :param new_phase: phase on which the trafficlight should switch next.
         :return: none.
         """
         new_phase = self.complete_phases[new_phase]
-        self.next_phase = new_phase
 
         if new_phase == self.current_phase or self.current_phase_duration < MIN_GREEN:
             self.current_phase_duration += SIMULATION_STEP
+            self.next_phase = self.current_phase
         else:
             self.current_phase_duration = SIMULATION_STEP - YELLOW_TIME
+            self.next_phase = new_phase
             self._set_yellow_phase()
 
     def _set_yellow_phase(self):
@@ -67,3 +72,4 @@ class Trafficlight:
 
         self.connection.trafficlight.setRedYellowGreenState(self.trafficlight_id, yellow_phase_state)
         self.connection.trafficlight.setPhaseDuration(self.trafficlight_id, YELLOW_TIME)
+        print(self.connection.trafficlight.getCompleteRedYellowGreenDefinition(self.trafficlight_id))

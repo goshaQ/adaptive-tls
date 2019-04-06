@@ -205,7 +205,7 @@ class Observer:
             result[position] = np.add(center, np.multiply(self._ROTATE[position], np.add(offset, coord)))
         return result
 
-    def get_state(self, trafficlight_id, display=True):
+    def get_observation(self, trafficlight_id, display=True):
         r"""Produces a tensor obtained by staking matrices each of which represent current state
         of the specified trafficlight from different perspective.
 
