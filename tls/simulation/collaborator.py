@@ -16,12 +16,13 @@ class Collaborator:
     """
     def __init__(self, connection, trafficlight_skeletons):
         self.connection = connection
-        self.observer = Observer(connection, trafficlight_skeletons)
 
         # Initialize `Trafficlight` objects for each observed trafficlight
         self.trafficlights = dict()
-        for trafficlight_id in trafficlight_skeletons:
+        self.observers = dict()
+        for trafficlight_id, skeleton in trafficlight_skeletons.items():
             self.trafficlights[trafficlight_id] = Trafficlight(connection, trafficlight_id)
+            self.observers[trafficlight_id] = Observer(connection, skeleton)
 
         self.simulation_time = 0
 
@@ -51,6 +52,6 @@ class Collaborator:
         """
 
         observations = {}
-        for trafficlight_id in self.trafficlights:
-            observations[trafficlight_id] = self.observer.get_observation(trafficlight_id, display=False)
+        for trafficlight_id, observer in self.observers.items():
+            observations[trafficlight_id] = observer.get_observation()
         return observations
