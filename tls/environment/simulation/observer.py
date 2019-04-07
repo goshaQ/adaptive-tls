@@ -1,5 +1,5 @@
 import numpy as np
-import constants as c
+from environment import constants as c
 
 from string import Template
 from collections import deque

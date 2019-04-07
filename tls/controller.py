@@ -24,7 +24,7 @@ parser.add_argument('config_path', type=str,
 
 args = parser.parse_args()
 
-cmd = ['sumo-gui', '--start', '--quit-on-end',  '-c', args.config_path]
+cmd = ['sumo-gui', '--start', '--quit-on-end', '-c', args.config_path]
 # cmd = ['sumo-gui', '--start', '-c', args.config_path]
 
 tt = traci.trafficlight  # ?
@@ -69,7 +69,7 @@ problematic_trafficlights = [
 skeletons = {}
 for trafficlight in net.getTrafficLights():
     if trafficlight.getID() in problematic_trafficlights: continue
-    
+
     trafficlight_skeleton = network_utils.extract_tl_skeleton(net, trafficlight)
     skeletons[trafficlight.getID()] = trafficlight_skeleton
 

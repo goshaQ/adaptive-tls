@@ -1,6 +1,4 @@
-from additional.induction_loops import CONFIGURATION
-
-from constants import (
+from environment.constants import (
     MIN_GREEN,
     YELLOW_TIME,
     SIMULATION_STEP,
@@ -8,9 +6,10 @@ from constants import (
 
 
 class Trafficlight:
-    def __init__(self, connection, trafficlight_id):
+    def __init__(self, connection, trafficlight_id, additional):
         self.connection = connection
         self.trafficlight_id = trafficlight_id
+        self.additional = additional
 
         self.phases = connection.trafficlight.getCompleteRedYellowGreenDefinition(trafficlight_id)[0].getPhases()
         self.complete_phases = [idx for idx, phase in enumerate(self.phases) if 'y' not in phase.state]
@@ -20,17 +19,16 @@ class Trafficlight:
         self.current_phase = 0
         self.current_phase_duration = 0
 
-    def get_throughput(self, trafficlight_id):
+    def get_throughput(self):
         r"""Computes throughput of a trafficlight based on stop bar detectors information.
 
-        :param trafficlight_id: trafficlight ID.
         :return: throughput of a junction.
         """
-        if trafficlight_id not in CONFIGURATION:
-            raise ValueError(f'The configuration doesn\'t contain entry for the trafficlight {trafficlight_id}')
+        if self.trafficlight_id not in self.additional:
+            raise ValueError(f'The configuration doesn\'t contain entry for the trafficlight {self.trafficlight_id}')
 
         throughput = 0
-        for segment in CONFIGURATION[trafficlight_id].values():
+        for segment in self.additional.values():
             for loop_id in segment['departure_detectors']:
                 throughput += self.connection.inductionloop.getLastStepVehicleNumber(loop_id)
         return throughput
@@ -72,4 +70,3 @@ class Trafficlight:
 
         self.connection.trafficlight.setRedYellowGreenState(self.trafficlight_id, yellow_phase_state)
         self.connection.trafficlight.setPhaseDuration(self.trafficlight_id, YELLOW_TIME)
-        print(self.connection.trafficlight.getCompleteRedYellowGreenDefinition(self.trafficlight_id))

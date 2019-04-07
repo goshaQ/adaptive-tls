@@ -1,9 +1,12 @@
 import os
 import sys
+import numpy as np
 
-from processing import network_utils
-from simulation.collaborator import Collaborator
+from .processing import network_utils
+from .simulation.collaborator import Collaborator
+from .additional.induction_loops import process_additional_file
 
+from gym import spaces
 from ray.rllib.env.multi_agent_env import MultiAgentEnv
 
 if 'SUMO_HOME' in os.environ:
@@ -22,16 +25,17 @@ _PROBLEMATIC_TRAFFICLIGHTS = [
 
 
 class Env(MultiAgentEnv):
-    def __init__(self, net_file, config_file, use_gui=True, single_agent=True):
-        r"""SUMO Environment for Adaptive Traffic Light Control.
+    r"""SUMO Environment for Adaptive Traffic Light Control.
 
-        Arguments:
-            net_file (str): SUMO .net.xml file.
-            config_file (str): SUMO .config file.
-            use_gui (bool): whether to run SUMO simulation with GUI visualisation.
-            single_agent (bool): whether the environment is single or multi agent.
-        """
+    Arguments:
+        net_file (str): SUMO .net.xml file.
+        config_file (str): SUMO .config file.
+        additional_file (str): SUMO .det.xml file.
+        use_gui (bool): whether to run SUMO simulation with GUI visualisation.
+        single_agent (bool): whether the environment is single or multi agent.
+    """
 
+    def __init__(self, net_file, config_file, additional_file, use_gui=True, single_agent=True):
         self.trafficlight_skeletons = {}
         self.trafficlight_ids = []
         self.action_space = None
@@ -48,6 +52,9 @@ class Env(MultiAgentEnv):
             self.trafficlight_skeletons[id_] = network_utils.extract_tl_skeleton(net, trafficlight)
             self.trafficlight_ids.append(id_)
 
+        # Preprocess the file with information about induction loops
+        self.additional = process_additional_file(additional_file)
+
         # Define the command to run SUMO simulation
         if use_gui:
             sumo_binary = sumolib.checkBinary('sumo-gui')
@@ -55,12 +62,20 @@ class Env(MultiAgentEnv):
             sumo_binary = sumolib.checkBinary('sumo')
         self._sumo_cmd = [sumo_binary, '--start', '--quit-on-end', '-c', config_file]
 
-    def step(self, action_dict):
-        pass
+        self.observation_space = spaces.Box(low=0.0, high=1.0,
+                                            shape=Collaborator.get_observation_space_shape(), dtype=np.float32)
+        self.action_space = spaces.Discrete(Collaborator.get_action_space_shape())
+
+    def step(self, actions):
+        return self.collaborator.step(actions)
 
     def reset(self):
         traci.start(self._sumo_cmd)
 
         # Reinitialize the collaborator since the connection changed
-        self.collaborator = Collaborator(traci.getConnection(), self.trafficlight_skeletons)
-        return self.collaborator.get_observations()
+        self.collaborator = Collaborator(traci.getConnection(), self.trafficlight_skeletons, self.additional)
+        return self.collaborator.compute_observations()
+
+    def close(self):
+        traci.close()
+        self.collaborator = None
