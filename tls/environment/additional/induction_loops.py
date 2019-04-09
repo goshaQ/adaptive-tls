@@ -1,13 +1,10 @@
 import re
-from bs4 import (
-    BeautifulSoup,
-    Comment,
-)
+import bs4
 
 
 def process_additional_file(path):
     with open(path, 'r') as f:
-        soup = BeautifulSoup(f, features='xml')
+        soup = bs4.BeautifulSoup(f, features='xml')
     induction_loops = {}
 
     pattern = re.compile(r'<tlLogic id="(.+?)"')
@@ -22,16 +19,17 @@ def process_additional_file(path):
             position = trafficlight.findNext(string=position_type)
 
             detector_types = [' Departure detectors ']
+            detectors = {}
             for detector_type in detector_types:
-                detectors = position.findNext(string=detector_type)
+                detectors_ = position.findNext(string=detector_type)
 
-                detectors_list = []
-                next_ = detectors.next
-                while not (next_ is None or isinstance(next_, Comment)):
+                detectors[detector_type] = []
+                next_ = detectors_.next
+                while not (next_ is None or isinstance(next_, bs4.Comment)):
                     if next_.name == 'inductionLoop':
-                        detectors_list.append(next_.attrs['id'])
+                        detectors[detector_type].append(next_.attrs['id'])
                     next_ = next_.next
-                intersections[position_type] = detectors_list
+            intersections[position_type] = detectors
 
         induction_loops[trafficlight_id] = intersections
     return induction_loops

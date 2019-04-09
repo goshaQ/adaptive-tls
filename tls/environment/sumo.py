@@ -2,7 +2,7 @@ import os
 import sys
 import numpy as np
 
-from .processing import network_utils
+from .processing import netextractor
 from .simulation.collaborator import Collaborator
 from .additional.induction_loops import process_additional_file
 
@@ -10,13 +10,13 @@ from gym import spaces
 from ray.rllib.env.multi_agent_env import MultiAgentEnv
 
 if 'SUMO_HOME' in os.environ:
-    tools = os.path.join(os.environ['SUMO_HOME'], 'tools')
-    sys.path.append(tools)
+    path = os.path.join(os.environ['SUMO_HOME'], 'tools')
+    sys.path.append(path)
 else:
     sys.exit("Please declare environment variable 'SUMO_HOME'")
 
-import tools.sumolib as sumolib
-import tools.traci as traci
+import sumolib
+import traci
 
 _PROBLEMATIC_TRAFFICLIGHTS = [
     'cluster_290051912_298136030_648538909',
@@ -24,7 +24,7 @@ _PROBLEMATIC_TRAFFICLIGHTS = [
 ]
 
 
-class Env(MultiAgentEnv):
+class SUMOEnv(MultiAgentEnv):
     r"""SUMO Environment for Adaptive Traffic Light Control.
 
     Arguments:
@@ -49,7 +49,7 @@ class Env(MultiAgentEnv):
             id_ = trafficlight.getID()
             if id_ in _PROBLEMATIC_TRAFFICLIGHTS: continue
 
-            self.trafficlight_skeletons[id_] = network_utils.extract_tl_skeleton(net, trafficlight)
+            self.trafficlight_skeletons[id_] = netextractor.extract_tl_skeleton(net, trafficlight)
             self.trafficlight_ids.append(id_)
 
         # Preprocess the file with information about induction loops
@@ -67,9 +67,30 @@ class Env(MultiAgentEnv):
         self.action_space = spaces.Discrete(Collaborator.get_action_space_shape())
 
     def step(self, actions):
+        r""" Runs one time-step of the environment's dynamics.
+        The reset() method is called at the end of every episode.
+
+        Arguments:
+            actions (Dict[int]): The action to be executed in the environment by each agent.
+        Returns:
+            (observation, reward, done, info)
+                observation (object):
+                    Observation from the environment at the current time-step
+                reward (float):
+                    Reward from the environment due to the previous action performed
+                done (bool):
+                    a boolean, indicating whether the episode has ended
+                info (dict):
+                    a dictionary containing additional information about the previous action
+        """
         return self.collaborator.step(actions)
 
     def reset(self):
+        r"""Reset the environment state and returns an initial observation.
+
+        Returns:
+            observation (object): The initial observation for the new episode after reset.
+        """
         traci.start(self._sumo_cmd)
 
         # Reinitialize the collaborator since the connection changed
@@ -77,5 +98,5 @@ class Env(MultiAgentEnv):
         return self.collaborator.compute_observations()
 
     def close(self):
-        traci.close()
         self.collaborator = None
+        traci.close()

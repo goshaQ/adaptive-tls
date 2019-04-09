@@ -24,12 +24,12 @@ class Trafficlight:
 
         :return: throughput of a junction.
         """
-        if self.trafficlight_id not in self.additional:
+        if self.additional is None:
             raise ValueError(f'The configuration doesn\'t contain entry for the trafficlight {self.trafficlight_id}')
 
         throughput = 0
         for segment in self.additional.values():
-            for loop_id in segment['departure_detectors']:
+            for loop_id in segment[' Departure detectors ']:
                 throughput += self.connection.inductionloop.getLastStepVehicleNumber(loop_id)
         return throughput
 

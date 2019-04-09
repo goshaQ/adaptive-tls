@@ -1,4 +1,3 @@
-import json
 from environment import constants as c
 
 from queue import deque
@@ -321,10 +320,3 @@ def _process_elements(net, elements, squeeze=True):
 
     elements['lanes'] = merged
     return elements
-
-
-def pprint(val):
-    if isinstance(val, dict) or isinstance(val, list):
-        print(json.dumps(val, indent=2))
-    else:
-        print(val)

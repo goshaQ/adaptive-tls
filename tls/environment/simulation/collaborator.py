@@ -22,7 +22,8 @@ class Collaborator:
         self.trafficlights = dict()
         self.observers = dict()
         for trafficlight_id, skeleton in trafficlight_skeletons.items():
-            self.trafficlights[trafficlight_id] = Trafficlight(connection, trafficlight_id, additional[trafficlight_id])
+            self.trafficlights[trafficlight_id] = \
+                Trafficlight(connection, trafficlight_id, additional.get(trafficlight_id, None))
             self.observers[trafficlight_id] = Observer(connection, skeleton)
 
         self.simulation_time = 0
@@ -61,7 +62,7 @@ class Collaborator:
 
         observations = self.compute_observations()
         rewards = self.compute_rewards()
-        done = {'__all__': self.connection.simulation.getMinExpectedNumber() > 0}
+        done = {'__all__': self.connection.simulation.getMinExpectedNumber() == 0}
         info = {}
 
         return observations, rewards, done, info
@@ -101,5 +102,8 @@ class Collaborator:
 
         rewards = {}
         for trafficlight_id, trafficlight in self.trafficlights.items():
-            rewards[trafficlight_id] = trafficlight.get_throughput()
+            try:
+                rewards[trafficlight_id] = trafficlight.get_throughput()
+            except ValueError:
+                rewards[trafficlight_id] = 0
         return rewards
