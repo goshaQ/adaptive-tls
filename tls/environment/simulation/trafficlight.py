@@ -18,6 +18,7 @@ class Trafficlight:
         self.next_phase = 0
         self.current_phase = 0
         self.current_phase_duration = 0
+        self.prev_traffic = set()
 
     def get_throughput(self):
         r"""Computes throughput of a trafficlight based on stop bar detectors information.
@@ -27,10 +28,14 @@ class Trafficlight:
         if self.additional is None:
             raise ValueError(f'The configuration doesn\'t contain entry for the trafficlight {self.trafficlight_id}')
 
-        throughput = 0
+        traffic = set()
         for segment in self.additional.values():
             for loop_id in segment[' Departure detectors ']:
-                throughput += self.connection.inductionloop.getLastStepVehicleNumber(loop_id)
+                traffic.update(self.connection.inductionloop.getLastStepVehicleIDs(loop_id))
+
+        throughput = len(traffic - self.prev_traffic)
+        self.prev_traffic = traffic
+
         return throughput
 
     def update_phase(self):

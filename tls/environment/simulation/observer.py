@@ -205,7 +205,7 @@ class Observer:
         :return: none.
         """
 
-        self.current_observation = np.zeros((c.MESH_SIZE, c.MESH_SIZE))
+        self.current_observation = np.zeros((c.MESH_SIZE, c.MESH_SIZE, 1))
 
         for junction, relative_offset in self.topology:
             polygon = self._get_junction_polygon(junction, relative_offset)
@@ -231,7 +231,7 @@ class Observer:
                             if not np.array_equal(idx, self._clamp(idx, min=0, max=c.MESH_SIZE - 1)):
                                 continue
 
-                            self.current_observation[tuple(idx)] = 1
+                            self.current_observation[tuple(idx)][0] = 1
                     cursor += step
         return self.current_observation
 

@@ -60,10 +60,11 @@ class SUMOEnv(MultiAgentEnv):
             sumo_binary = sumolib.checkBinary('sumo-gui')
         else:
             sumo_binary = sumolib.checkBinary('sumo')
-        self._sumo_cmd = [sumo_binary, '--start', '--quit-on-end', '-c', config_file]
+        self._sumo_cmd = [sumo_binary, '--start', '--quit-on-end', '--threads', '4', '-c', config_file]
 
+        # TODO: Revise
         self.observation_space = spaces.Box(low=0.0, high=1.0,
-                                            shape=Collaborator.get_observation_space_shape(), dtype=np.float32)
+                                            shape=Collaborator.get_observation_space_shape(), dtype=np.float32),
         self.action_space = spaces.Discrete(Collaborator.get_action_space_shape())
 
     def step(self, actions):
@@ -91,6 +92,7 @@ class SUMOEnv(MultiAgentEnv):
         Returns:
             observation (object): The initial observation for the new episode after reset.
         """
+        self.close()
         traci.start(self._sumo_cmd)
 
         # Reinitialize the collaborator since the connection changed
@@ -99,4 +101,3 @@ class SUMOEnv(MultiAgentEnv):
 
     def close(self):
         self.collaborator = None
-        traci.close()
