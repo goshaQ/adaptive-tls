@@ -60,7 +60,8 @@ class SUMOEnv(MultiAgentEnv):
             sumo_binary = sumolib.checkBinary('sumo-gui')
         else:
             sumo_binary = sumolib.checkBinary('sumo')
-        self._sumo_cmd = [sumo_binary, '--start', '--quit-on-end', '--threads', '4', '-c', config_file]
+        self._sumo_cmd = [sumo_binary, '--no-warnings', '--no-step-log',
+                          '--start', '--quit-on-end', '-c', config_file]
 
         # TODO: Revise
         self.observation_space = spaces.Box(low=0.0, high=1.0,
