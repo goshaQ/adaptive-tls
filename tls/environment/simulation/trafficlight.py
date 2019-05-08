@@ -20,8 +20,13 @@ class Trafficlight:
         self.current_phase_duration = 0
         self.prev_traffic = set()
 
+        self.lanes = [link[0][0] for link in connection.trafficlight.getControlledLinks(trafficlight_id)]
+        self.prev_queue_length = 0
+
     def get_throughput(self):
         r"""Computes throughput of a trafficlight based on stop bar detectors information.
+        The returned number of cars that passed through intersection equal to the number
+        of cars passed since the last call of the method.
 
         :return: throughput of a junction.
         """
@@ -37,6 +42,27 @@ class Trafficlight:
         self.prev_traffic = traffic
 
         return throughput
+
+    def get_queue_length(self):
+        r"""Computes the difference of sums of queues at each line on the intersection between
+        two calls of the method.
+
+        :return: total queue length
+        """
+        max_queue_sum = 0
+        for phase_idx in self.complete_phases:
+            max_queue = 0
+            for lane_id, signal in zip(self.lanes, self.phases[phase_idx].state):
+                if signal.lower() == 'g':
+                    queue = self.connection.lane.getLastStepHaltingNumber(lane_id)
+                    if max_queue < queue:
+                        max_queue = queue
+            max_queue_sum += max_queue**2
+
+        diff = self.prev_queue_length - max_queue_sum
+        self.prev_queue_length = max_queue_sum
+
+        return diff
 
     def update_phase(self):
         r"""Sends the signal to switch the trafficlight to the next phase.

@@ -10,7 +10,7 @@ MESH_PARTITIONING_STEP = 6
 SIMULATION_STEP = 5
 
 # Minimum duration of a green light; s
-MIN_GREEN = 5
+MIN_GREEN = 15
 
 # Duration of a yellow light; s
 YELLOW_TIME = 4

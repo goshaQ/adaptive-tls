@@ -24,7 +24,7 @@ class Collaborator:
         self.trafficlights = dict()
         self.observers = dict()
         for trafficlight_id, skeleton in trafficlight_skeletons.items():
-            if trafficlight_id not in additional: continue  # Ensure that reward can be computed
+            # if trafficlight_id not in additional: continue  # Ensure that reward can be computed
 
             self.trafficlights[trafficlight_id] = \
                 Trafficlight(connection, trafficlight_id, additional.get(trafficlight_id, None))
@@ -61,6 +61,7 @@ class Collaborator:
         Arguments:
             actions: dictionary with action for each agent.
         """
+
         self._apply_actions(actions, prepare=True)
 
         self.simulation_time += YELLOW_TIME
@@ -111,9 +112,6 @@ class Collaborator:
                 'obs': observer.get_observation(),
                 'action_mask': action_mask
             }
-
-            if trafficlight_id == 'cluster_290051912_298136030_648538909':
-                observer.print_current_observation()
         return observations
 
     def compute_rewards(self):
@@ -122,11 +120,20 @@ class Collaborator:
         :return: dictionary with reward for the last action for each intersection
         """
 
+        return self._queue_length_reward()
+
+    def _queue_length_reward(self):
+        rewards = {}
+        for trafficlight_id, trafficlight in self.trafficlights.items():
+            rewards[trafficlight_id] = trafficlight.get_queue_length()
+        return rewards
+
+    def _throughput_reward(self):
         rewards = {}
         for trafficlight_id, trafficlight in self.trafficlights.items():
             try:
                 rewards[trafficlight_id] = trafficlight.get_throughput()
-            except ValueError:
+            except ValueError:  # Some trafficlights might not have ILVD
                 rewards[trafficlight_id] = 0
         return rewards
 
