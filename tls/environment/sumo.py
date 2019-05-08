@@ -18,11 +18,6 @@ else:
 import sumolib
 import traci
 
-_PROBLEMATIC_TRAFFICLIGHTS = [
-    'cluster_290051912_298136030_648538909',
-    'cluster_2511020102_2511020103_290051922_298135886',
-]
-
 
 class SUMOEnv(MultiAgentEnv):
     r"""SUMO Environment for Adaptive Traffic Light Control.
@@ -32,10 +27,9 @@ class SUMOEnv(MultiAgentEnv):
         config_file (str): SUMO .config file.
         additional_file (str): SUMO .det.xml file.
         use_gui (bool): whether to run SUMO simulation with GUI visualisation.
-        single_agent (bool): whether the environment is single or multi agent.
     """
 
-    def __init__(self, net_file, config_file, additional_file, use_gui=True, single_agent=True):
+    def __init__(self, net_file, config_file, additional_file, use_gui=True):
         self.trafficlight_skeletons = {}
         self.trafficlight_ids = []
         self.action_space = None
@@ -47,8 +41,6 @@ class SUMOEnv(MultiAgentEnv):
         # Preprocess the network definition and produce internal representation of each trafficlight
         for trafficlight in net.getTrafficLights():
             id_ = trafficlight.getID()
-            if id_ in _PROBLEMATIC_TRAFFICLIGHTS: continue
-
             self.trafficlight_skeletons[id_] = netextractor.extract_tl_skeleton(net, trafficlight)
             self.trafficlight_ids.append(id_)
 
@@ -60,13 +52,22 @@ class SUMOEnv(MultiAgentEnv):
             sumo_binary = sumolib.checkBinary('sumo-gui')
         else:
             sumo_binary = sumolib.checkBinary('sumo')
-        self._sumo_cmd = [sumo_binary, '--no-warnings', '--no-step-log',
+        self._sumo_cmd = [sumo_binary, '--no-warnings', '--no-step-log', '--time-to-teleport', '-1',
                           '--start', '--quit-on-end', '-c', config_file]
 
-        # TODO: Revise
-        self.observation_space = spaces.Box(low=0.0, high=1.0,
-                                            shape=Collaborator.get_observation_space_shape(), dtype=np.float32),
-        self.action_space = spaces.Discrete(Collaborator.get_action_space_shape())
+        # Start simulation to get insight about the environment
+        traci.start(self._sumo_cmd)
+        tmp = Collaborator(traci.getConnection(), self.trafficlight_skeletons, self.additional)
+
+        self.observation_space = spaces.Dict({
+            'obs': spaces.Box(low=0., high=1.,
+                              shape=tmp.observation_space_shape, dtype=np.float32),
+            'action_mask': spaces.Box(low=0, high=1,
+                                      shape=tmp.action_space_shape, dtype=np.int32)
+        })
+        self.action_space = spaces.Discrete(tmp.available_actions)
+
+        traci.close()
 
     def step(self, actions):
         r""" Runs one time-step of the environment's dynamics.
@@ -101,4 +102,7 @@ class SUMOEnv(MultiAgentEnv):
         return self.collaborator.compute_observations()
 
     def close(self):
-        self.collaborator = None
+        if self.collaborator is not None:
+            self.collaborator.close()
+            self.collaborator = None
+

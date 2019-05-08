@@ -1,3 +1,5 @@
+import numpy as np
+
 from .observer import Observer
 from .trafficlight import Trafficlight
 
@@ -22,22 +24,31 @@ class Collaborator:
         self.trafficlights = dict()
         self.observers = dict()
         for trafficlight_id, skeleton in trafficlight_skeletons.items():
+            if trafficlight_id not in additional: continue  # Ensure that reward can be computed
+
             self.trafficlights[trafficlight_id] = \
                 Trafficlight(connection, trafficlight_id, additional.get(trafficlight_id, None))
             self.observers[trafficlight_id] = Observer(connection, skeleton)
 
         self.simulation_time = 0
 
-    @staticmethod
-    def get_observation_space_shape():
-        # ToDo: Replace with `get_current_shape` call
-        return MESH_SIZE, MESH_SIZE, 1
+    @property
+    def observation_space_shape(self):
+        for observer in self.observers.values():
+            return observer.current_observation.shape
 
-    @staticmethod
-    def get_action_space_shape():
-        # ToDo: Replace; Should return the maximum number of actions and masks
-        # For reference github.com/ray-project/ray/blob/master/python/ray/rllib/examples/parametric_action_cartpole.py
-        return 3
+    @property
+    def action_space_shape(self):
+        return self.available_actions,
+
+    @property
+    def available_actions(self):
+        max_ = 0
+        for trafficlight in self.trafficlights.values():
+            num_actions = len(trafficlight.complete_phases)
+            if max_ < num_actions:
+                max_ = num_actions
+        return max_
 
     def step(self, actions):
         r"""Applies actions of traffic light controller(s) and makes simulation step.
@@ -91,7 +102,18 @@ class Collaborator:
 
         observations = {}
         for trafficlight_id, observer in self.observers.items():
-            observations[trafficlight_id] = observer.get_observation()
+            agent_actions = len(self.trafficlights[trafficlight_id].complete_phases)
+
+            action_mask = np.zeros(self.available_actions)
+            action_mask[:agent_actions] = 1
+
+            observations[trafficlight_id] = {
+                'obs': observer.get_observation(),
+                'action_mask': action_mask
+            }
+
+            if trafficlight_id == 'cluster_290051912_298136030_648538909':
+                observer.print_current_observation()
         return observations
 
     def compute_rewards(self):
@@ -107,3 +129,6 @@ class Collaborator:
             except ValueError:
                 rewards[trafficlight_id] = 0
         return rewards
+
+    def close(self):
+        self.connection.close()

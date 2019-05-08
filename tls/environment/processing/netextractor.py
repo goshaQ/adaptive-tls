@@ -128,6 +128,12 @@ def get_junction_type(node):
         if _node.getType() not in ['traffic_light', 'priority', 'dead_end']:
             return True
 
+        if _node.getID() in [
+            '1568545296', '2511020105',  # cluster_2511020102_2511020103_290051922_298135886
+            '1572144743', '49297296'  # cluster_290051912_298136030_648538909
+        ]:
+            return True
+
     def is_dead_end(_node=node):
         if _node.getType() == 'dead_end':
             return True

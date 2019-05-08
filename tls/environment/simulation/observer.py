@@ -34,7 +34,7 @@ class Observer:
 
     def __init__(self, connection, trafficlight_skeleton):
         self.connection = connection
-        self.current_observation = None
+        self.current_observation = np.zeros((c.MESH_SIZE, c.MESH_SIZE, 1))
 
         self.trafficlight_id = trafficlight_skeleton['id']
         self.trafficlight_skeleton = trafficlight_skeleton
@@ -243,7 +243,7 @@ class Observer:
         _PURPLE = Template('\x1b[0;30;45m$str\x1b[0m')
 
         mesh = self.color_layer.copy()
-        mesh[np.where(self.current_observation == 1)] = 9
+        mesh[np.where(self.current_observation[:, :, 0] == 1)] = 9
 
         for row in mesh:
             sep = ''
