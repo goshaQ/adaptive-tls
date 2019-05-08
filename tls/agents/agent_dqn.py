@@ -57,7 +57,7 @@ def train():
                 "custom_options": {},
             },
             'hiddens': [],  # Don't postprocess the action scores
-            'timesteps_per_iteration': 1000,
+            'timesteps_per_iteration': 16000,
             # 'num_workers': 4,
             # 'num_gpus_per_worker': 0.25,  # All workers on a single GPU
         }

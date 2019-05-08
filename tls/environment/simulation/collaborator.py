@@ -1,10 +1,11 @@
 import numpy as np
 
+from collections import deque
+
 from .observer import Observer
 from .trafficlight import Trafficlight
 
 from environment.constants import (
-    MESH_SIZE,
     YELLOW_TIME,
     SIMULATION_STEP,
 )
@@ -31,6 +32,12 @@ class Collaborator:
             self.observers[trafficlight_id] = Observer(connection, skeleton)
 
         self.simulation_time = 0
+
+        self.total_vehicles = deque(maxlen=20)
+        self.connection.simulation.subscribe([
+            0x73,  # VAR_DEPARTED_VEHICLES_NUMBER
+            0x79,  # VAR_ARRIVED_VEHICLES_NUMBER
+        ])
 
     @property
     def observation_space_shape(self):
@@ -66,18 +73,32 @@ class Collaborator:
 
         self.simulation_time += YELLOW_TIME
         self.connection.simulationStep(step=self.simulation_time)
+        self.total_vehicles.append(
+            sum(self.connection.simulation.getSubscriptionResults().values()))
 
         self._apply_actions(actions)
 
         self.simulation_time += SIMULATION_STEP - YELLOW_TIME
         self.connection.simulationStep(step=self.simulation_time)
+        self.total_vehicles.append(
+            sum(self.connection.simulation.getSubscriptionResults().values()))
 
         observations = self.compute_observations()
         rewards = self.compute_rewards()
-        done = {'__all__': self.connection.simulation.getMinExpectedNumber() == 0}
+        done = {'__all__': self.is_finished()}
         info = {}
 
         return observations, rewards, done, info
+
+    def is_finished(self):
+        print(self.total_vehicles)
+        if self.connection.simulation.getMinExpectedNumber() == 0:
+            return True  # All route files has been parsed completely
+        elif sum(self.total_vehicles) == 0:
+            print('Simulation halted')
+            return True  # Simulation halted
+        else:
+            return False
 
     def _apply_actions(self, actions, prepare=False):
         r"""Changes the next state of every trafficlight in accordance
