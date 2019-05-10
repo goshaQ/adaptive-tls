@@ -1,11 +1,8 @@
-import sys
 import ray
-import subprocess
 
 from argparse import ArgumentParser
 
-
-from ray.rllib.agents.dqn import DQNTrainer
+from ray.rllib.agents.dqn import ApexTrainer
 from ray.tune.logger import pretty_print
 from ray.tune.registry import register_env
 from ray.tune import function
@@ -19,11 +16,10 @@ _NETWORK_PATH = '/home/gosha/workspace/pycharm/adaptive-tls/tls/networks/montgom
 def on_episode_end(info):
     env = info['env']
     env.close()  # Close SUMO simulation
-    # info['episode'].agent_rewards
 
 
 def train(num_iters):
-    trainer = DQNTrainer(
+    trainer = ApexTrainer(
         env='SUMOEnv-v0',
         config={
             'model': {
@@ -34,26 +30,13 @@ def train(num_iters):
             'callbacks': {
                 'on_episode_end': function(on_episode_end),
             },
-            # 'num_workers': 4,
-            # 'num_gpus_per_worker': 0.25,  # All workers on a single GPU
+            'num_workers': 8,
             'timesteps_per_iteration': 16000,
         }
     )
-
     for i in range(num_iters):
         print(f'== Iteration {i}==')
         print(pretty_print(trainer.train()))
-
-
-def rollout(checkpoint_path, env='SUMOEnv-v0', steps=1000):
-    subprocess.call([
-        sys.executable,
-        '../rollout.py', checkpoint_path,
-        '--env', env,
-        '--steps', str(steps),
-        '--run', 'DQN',
-        '--no-render',
-    ])
 
 
 if __name__ == '__main__':

@@ -94,7 +94,6 @@ class SUMOEnv(MultiAgentEnv):
         Returns:
             observation (object): The initial observation for the new episode after reset.
         """
-        self.close()
         traci.start(self._sumo_cmd)
 
         # Reinitialize the collaborator since the connection changed

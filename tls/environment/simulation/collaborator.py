@@ -25,7 +25,7 @@ class Collaborator:
         self.trafficlights = dict()
         self.observers = dict()
         for trafficlight_id, skeleton in trafficlight_skeletons.items():
-            # if trafficlight_id not in additional: continue  # Ensure that reward can be computed
+            if trafficlight_id not in additional: continue  # Ensure that reward can be computed
 
             self.trafficlights[trafficlight_id] = \
                 Trafficlight(connection, trafficlight_id, additional.get(trafficlight_id, None))
@@ -91,11 +91,9 @@ class Collaborator:
         return observations, rewards, done, info
 
     def is_finished(self):
-        print(self.total_vehicles)
         if self.connection.simulation.getMinExpectedNumber() == 0:
             return True  # All route files has been parsed completely
         elif sum(self.total_vehicles) == 0:
-            print('Simulation halted')
             return True  # Simulation halted
         else:
             return False
@@ -141,7 +139,7 @@ class Collaborator:
         :return: dictionary with reward for the last action for each intersection
         """
 
-        return self._queue_length_reward()
+        return self._throughput_reward()
 
     def _queue_length_reward(self):
         rewards = {}
