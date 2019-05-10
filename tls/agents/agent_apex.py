@@ -14,11 +14,11 @@ _NETWORK_PATH = '/home/gosha/workspace/pycharm/adaptive-tls/tls/networks/montgom
 
 
 def on_episode_end(info):
-    env = info['env']
-    env.close()  # Close SUMO simulation
+    env = info['env'].envs[0]
+    env.close()
 
 
-def train(num_iters):
+def train(num_iters, checkpoint_freq):
     trainer = ApexTrainer(
         env='SUMOEnv-v0',
         config={
@@ -38,6 +38,10 @@ def train(num_iters):
         print(f'== Iteration {i}==')
         print(pretty_print(trainer.train()))
 
+        if i % checkpoint_freq:
+            checkpoint = trainer.save()
+            print(f'\nCheckpoint saved at {checkpoint}\n')
+
 
 if __name__ == '__main__':
     parser = ArgumentParser(description='Training script of Proximal Policy Optimization Agent')
@@ -49,6 +53,8 @@ if __name__ == '__main__':
                         help='Path to the .det.xml file')
     parser.add_argument('--num-iters', type=int, default=1000,
                         help='Number of optimization iterations')
+    parser.add_argument('--checkpoint-freq', type=int, default=100,
+                        help='Frequence with which a checkpoint will be created')
     args = parser.parse_args()
 
     # Register the model and environment
@@ -62,4 +68,4 @@ if __name__ == '__main__':
     ray.init()
 
     # Train the agent
-    train(args.num_iters)
+    train(args.num_iters, args.checkpoint_freq)

@@ -17,12 +17,12 @@ _NETWORK_PATH = '/home/gosha/workspace/pycharm/adaptive-tls/tls/networks/montgom
 
 
 def on_episode_end(info):
-    env = info['env']
+    env = info['env'].envs[0]  # Each worker has own list
     env.close()  # Close SUMO simulation
     # info['episode'].agent_rewards
 
 
-def train(num_iters):
+def train(num_iters, checkpoint_freq):
     trainer = DQNTrainer(
         env='SUMOEnv-v0',
         config={
@@ -43,6 +43,10 @@ def train(num_iters):
     for i in range(num_iters):
         print(f'== Iteration {i}==')
         print(pretty_print(trainer.train()))
+
+        if i % checkpoint_freq:
+            checkpoint = trainer.save()
+            print(f'\nCheckpoint saved at {checkpoint}\n')
 
 
 def rollout(checkpoint_path, env='SUMOEnv-v0', steps=1000):
@@ -66,17 +70,24 @@ if __name__ == '__main__':
                         help='Path to the .det.xml file')
     parser.add_argument('--num-iters', type=int, default=1000,
                         help='Number of optimization iterations')
+    parser.add_argument('--checkpoint-freq', type=int, default=100,
+                        help='Frequence with which a checkpoint will be created')
+    parser.add_argument('--mode', choices=['train', 'eval'], default='eval',
+                        help='Execution mode')
     args = parser.parse_args()
 
-    # Register the model and environment
-    register_env('SUMOEnv-v0', lambda _: SUMOEnv(net_file=args.net_file,
-                                                 config_file=args.config_file,
-                                                 additional_file=args.additional_file,
-                                                 use_gui=True))
-    register_model()
+    if args.mode == 'train':
+        # Register the model and environment
+        register_env('SUMOEnv-v0', lambda _: SUMOEnv(net_file=args.net_file,
+                                                     config_file=args.config_file,
+                                                     additional_file=args.additional_file,
+                                                     use_gui=True))
+        register_model()
 
-    # Initialize ray
-    ray.init()
+        # Initialize ray
+        ray.init()
 
-    # Train the agent
-    train(args.num_iters)
+        # Train the agent
+        train(args.num_iters, args.checkpoint_freq)
+    elif args.mode == 'eval':
+        rollout('/home/gosha/ray_results/DQN_SUMOEnv-v0_NO_TUNING_24h/')  # Should be replaced

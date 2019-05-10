@@ -34,12 +34,14 @@ Example Usage via executable:
 from ray.tune.registry import register_env
 
 from tls.environment.sumo import SUMOEnv
+from tls.agents.models import register_model
 
 
 register_env('SUMOEnv-v0', lambda _: SUMOEnv(net_file='/home/gosha/Загрузки/network/moco.net.xml',
                                              config_file='/home/gosha/Загрузки/network/testmap.sumocfg',
                                              additional_file='/home/gosha/Загрузки/network/moco.det.xml',
                                              use_gui=True))
+register_model()
 
 
 def create_parser(parser_creator=None):
@@ -97,7 +99,9 @@ def run(args, parser):
         with open(config_path, 'rb') as f:
             config = pickle.load(f)
     if "num_workers" in config:
-        config["num_workers"] = min(2, config["num_workers"])
+        del config["num_workers"]
+    if "num_gpus_per_worker" in config:
+        del config["num_gpus_per_worker"]
     config = merge_dicts(config, args.config)
     if not args.env:
         if not config.get("env"):
