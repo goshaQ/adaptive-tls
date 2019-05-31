@@ -1,0 +1,671 @@
+<additional>
+
+    <!-- #######################################################Montrose Rd & Farm Haven#######################################################  -->
+    <!-- 
+    <tlLogic id="cluster_290051904_49145925" type="static" programID="10" offset="98">
+        <phase duration="32" state="rrrGGGGgrrrGGGGg"/>
+        <phase duration="6" state="rrryyyygrrryyyyg"/>
+        <phase duration="20" state="rrrrrrrGrrrrrrrG"/>
+        <phase duration="6" state="rrrrrrryrrrrrrry"/>
+        <phase duration="24" state="GGgrrrrrGGgrrrrr"/>
+        <phase duration="6" state="yygrrrrryygrrrrr"/>
+        <phase duration="20" state="rrGrrrrrrrGrrrrr"/>
+        <phase duration="6" state="rryrrrrrrryrrrrr"/>
+    </tlLogic>
+    -->
+
+    <!-- Westside intersection -->
+    <!-- Stopbar detectors -->
+	<inductionLoop id="EBB4" lane="116069075#0.376_3" pos="37" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E770" lane="116069075#0.376_2" pos="37" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="EA04" lane="116069075#0.376_1" pos="37" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E226" lane="116069075#0.376_0" pos="37" freq="1" file="moco.out.xml"/>
+
+	<inductionLoop id="EAA7" lane="116069075#0.376_3" pos="26" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="DFA4" lane="116069075#0.376_2" pos="26" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E7BF" lane="116069075#0.376_1" pos="26" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E4CB" lane="116069075#0.376_0" pos="26" freq="1" file="moco.out.xml"/>
+
+	<!-- Advance detectors -->
+	<inductionLoop id="E7CB" lane="116069075#0_2" pos="319" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="EC0A" lane="116069075#0_1" pos="319" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E316" lane="116069075#0_0" pos="319" freq="1" file="moco.out.xml"/>
+
+	<!-- Departure detectors -->
+	<inductionLoop id="4F4B_4F23" lane="5982169#1_0" pos="22" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="4E7E_4E5E" lane="5982169#1_1" pos="22" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="4E22_4D78" lane="5982169#1_2" pos="22" freq="1" file="moco.out.xml"/>
+
+
+    <!-- Eastside intersection -->
+    <!-- Stopbar detectors -->
+    <inductionLoop id="E7D2" lane="5982169#0.394_0" pos="37" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E12D" lane="5982169#0.394_1" pos="37" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E31D" lane="5982169#0.394_2" pos="37" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E666" lane="5982169#0.394_3" pos="37" freq="1" file="moco.out.xml"/>
+
+	<inductionLoop id="E129" lane="5982169#0.394_0" pos="26" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E10B" lane="5982169#0.394_1" pos="26" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="ECCB" lane="5982169#0.394_2" pos="26" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E7D4" lane="5982169#0.394_3" pos="26" freq="1" file="moco.out.xml"/>
+
+	<!-- Advance detectors -->
+	<inductionLoop id="E668" lane="5982169#0_0" pos="289" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="EB7D" lane="5982169#0_1" pos="289" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E8B8" lane="5982169#0_2" pos="289" freq="1" file="moco.out.xml"/>
+
+	<!-- Departure detectors -->
+	<inductionLoop id="4306_48D1" lane="116069075#1_2" pos="22" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="4ADE_4BE3" lane="116069075#1_1" pos="22" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="4BF4_4C93" lane="116069075#1_0" pos="22" freq="1" file="moco.out.xml"/>
+
+
+	<!-- Southside intersection -->
+	<!-- Stopbar detectors -->
+	<inductionLoop id="E800" lane="50846782#2.53_1" pos="13" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="EB1E" lane="50846782#2.53_0" pos="13" freq="1" file="moco.out.xml"/>
+
+	<inductionLoop id="ECAB" lane="50846782#2.53_1" pos="3" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E18A" lane="50846782#2.53_0" pos="3" freq="1" file="moco.out.xml"/>
+
+	<!-- Advance detectors -->
+	<inductionLoop id="EA6C_EC83" lane="50846782#2_0" pos="2" freq="1" file="moco.out.xml"/>
+
+	<!-- Departure detectors -->
+	<inductionLoop id="E876" lane="-50846782#2_0" pos="3" freq="1" file="moco.out.xml"/>
+
+	<!-- Northside intersection -->
+	<!-- Stopbar detectors -->
+	<inductionLoop id="E93C" lane="5965712_0" pos="45" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E661" lane="5965712_1" pos="45" freq="1" file="moco.out.xml"/>
+
+	<inductionLoop id="E67C" lane="5965712_0" pos="34" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E31C" lane="5965712_1" pos="34" freq="1" file="moco.out.xml"/>
+
+	<!-- Advance detectors -->
+	<inductionLoop id="ECA6" lane="5965712_0" pos="2" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="EA2F" lane="5965712_1" pos="2" freq="1" file="moco.out.xml"/>
+
+
+	<!-- Departure detectors -->
+	<inductionLoop id="55E6" lane="-5965712_0" pos="3" freq="1" file="moco.out.xml"/>
+
+	<!-- ############################################################################################################################################################# -->
+	<!-- ############################################################################################################################################################  -->
+
+	<!-- #######################################################Montrose Rd & Tildenwood Dr #######################################################  -->
+    <!--
+    <tlLogic id="cluster_298135838_49135231" type="static" programID="10" offset="19">
+        <phase duration="40" state="rrrGGGGggrrrGGGGgg"/>
+        <phase duration="6" state="rrryyyyggrrryyyygg"/>
+        <phase duration="22" state="rrrrrrrGGrrrrrrrGG"/>
+        <phase duration="6" state="rrrrrrryyrrrrrrryy"/>
+        <phase duration="22" state="GGgrrrrrrGGgrrrrrr"/>
+        <phase duration="6" state="yygrrrrrryygrrrrrr"/>
+        <phase duration="12" state="rrGrrrrrrrrGrrrrrr"/>
+        <phase duration="6" state="rryrrrrrrrryrrrrrr"/>
+    </tlLogic>
+    -->
+
+	<!-- Westside intersection -->
+    <!-- Stopbar detectors -->
+	<inductionLoop id="E779" lane="116069075#1.338_4" pos="88" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E582" lane="116069075#1.338_3" pos="88" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="EC05" lane="116069075#1.338_2" pos="88" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E1D4" lane="116069075#1.338_1" pos="88" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E21F" lane="116069075#1.338_0" pos="88" freq="1" file="moco.out.xml"/>
+
+
+	<inductionLoop id="E845" lane="116069075#1.338_4" pos="77" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="EB52" lane="116069075#1.338_3" pos="77" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E84B" lane="116069075#1.338_2" pos="77" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E45D" lane="116069075#1.338_1" pos="77" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="EB72" lane="116069075#1.338_0" pos="77" freq="1" file="moco.out.xml"/>
+
+	<!-- Advance detectors -->
+	<inductionLoop id="E371" lane="116069075#1.264_3" pos="42" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="EA03" lane="116069075#1.264_2" pos="42" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E9D8" lane="116069075#1.264_1" pos="42" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E5AD" lane="116069075#1.264_0" pos="42" freq="1" file="moco.out.xml"/>
+
+
+	<!-- Departure detectors -->
+	<inductionLoop id="E039" lane="26467810_2" pos="10" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E79E" lane="26467810_1" pos="10" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E742" lane="26467810_0" pos="10" freq="1" file="moco.out.xml"/>
+
+	<!-- Eastside intersection -->
+    <!-- Stopbar detectors -->
+	<inductionLoop id="E94F" lane="116069186#1.128_0" pos="30" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E2A8" lane="116069186#1.128_1" pos="30" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E33A" lane="116069186#1.128_2" pos="30" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E8B3" lane="116069186#1.128_3" pos="30" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E877" lane="116069186#1.128_4" pos="30" freq="1" file="moco.out.xml"/>
+
+
+	<inductionLoop id="E1F7" lane="116069186#1.128_0" pos="19" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E847" lane="116069186#1.128_1" pos="19" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E21D" lane="116069186#1.128_2" pos="19" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E8E8" lane="116069186#1.128_3" pos="19" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E91C" lane="116069186#1.128_4" pos="19" freq="1" file="moco.out.xml"/>
+
+	<!-- Advance detectors NEED TO FIX THIS LATER AFTER FIXING THE INTERSECTION ON THE EASTSIDE DOWNSTREAM-->
+	<!--
+	<inductionLoop id="E371" lane="116069075#1.264_3" pos="42" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="EA03" lane="116069075#1.264_2" pos="42" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E9D8" lane="116069075#1.264_1" pos="42" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E5AD" lane="116069075#1.264_0" pos="42" freq="1" file="moco.out.xml"/>
+	-->
+
+	<!-- Departure detectors -->
+	<inductionLoop id="E7DC" lane="5982169#0_0" pos="10" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="EC76" lane="5982169#0_1" pos="10" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E551" lane="5982169#0_2" pos="10" freq="1" file="moco.out.xml"/>
+
+
+	<!-- Southside intersection -->
+	<!-- Stopbar detectors -->
+	<inductionLoop id="E967" lane="5968215#0.389_1" pos="19" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="EC4F" lane="5968215#0.389_0" pos="19" freq="1" file="moco.out.xml"/>
+
+	<inductionLoop id="EB98" lane="5968215#0.389_1" pos="11" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="ECA5" lane="5968215#0.389_0" pos="11" freq="1" file="moco.out.xml"/>
+
+	<!-- Advance detectors -->
+	<inductionLoop id="E663_E954" lane="5968215#0_0" pos="338" freq="1" file="moco.out.xml"/>
+
+	<!-- Departure detectors -->
+	<inductionLoop id="EBA7" lane="5968215#2_0" pos="11" freq="1" file="moco.out.xml"/>
+
+	<!-- Northside intersection -->
+	<!-- Stopbar detectors -->
+	<inductionLoop id="EA7D" lane="-5968215#2_0" pos="55" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E56A" lane="-5968215#2_1" pos="55" freq="1" file="moco.out.xml"/>
+
+	<inductionLoop id="E2BA" lane="-5968215#2_0" pos="47" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E261" lane="-5968215#2_1" pos="47" freq="1" file="moco.out.xml"/>
+
+	<!-- Advance detectors -->
+	<inductionLoop id="E7D3" lane="-5968215#2_0" pos="5" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E6A8" lane="-5968215#2_1" pos="5" freq="1" file="moco.out.xml"/>
+
+
+	<!-- Departure detectors -->
+	<inductionLoop id="E5C1" lane="-5968215#0_0" pos="11" freq="1" file="moco.out.xml"/>
+
+
+	<!-- ############################################################################################################################################################  -->
+	<!-- ############################################################################################################################################################  -->
+
+
+	<!-- #######################################################Montrose Rd & E Jefferson #######################################################  -->
+    <!--	
+    <tlLogic id="cluster_2511020106_49297289" type="static" programID="10" offset="0.0">
+        <phase duration="26" state="GGggggggrrrrrrrrrGGGGG"/>
+        <phase duration="6" state="yyggggggrrrrrrrrryyyyy"/>
+        <phase duration="22" state="rrGGGGGGrrrrrrrrrrrrrr"/>
+        <phase duration="6" state="rryyyyyyrrrrrrrrrrrrrr"/>
+        <phase duration="26" state="rrrrrrrrGGGGgggggrrrrr"/>
+        <phase duration="6" state="rrrrrrrryyyygggggrrrrr"/>
+        <phase duration="22" state="rrrrrrrrrrrrGGGGGrrrrr"/>
+        <phase duration="6" state="rrrrrrrrrrrryyyyyrrrrr"/>
+    </tlLogic>
+    -->
+
+	<!-- Westside intersection -->
+    <!-- Stopbar detectors -->
+	<inductionLoop id="E7C9" lane="-50846720#6.20_4" pos="177" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E457" lane="-50846720#6.20_3" pos="177" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E1CB" lane="-50846720#6.20_2" pos="177" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E1CA" lane="-50846720#6.20_1" pos="177" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E0A3" lane="-50846720#6.20_0" pos="177" freq="1" file="moco.out.xml"/>
+
+	<inductionLoop id="EC5C" lane="-50846720#6.20_4" pos="166" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E0A2" lane="-50846720#6.20_3" pos="166" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="ECA9" lane="-50846720#6.20_2" pos="166" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E02D" lane="-50846720#6.20_1" pos="166" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E8A6" lane="-50846720#6.20_0" pos="166" freq="1" file="moco.out.xml"/>
+
+
+	<!-- Advance detectors -->
+	<inductionLoop id="E004" lane="-50846720#6_1" pos="10" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E441" lane="-50846720#6_0" pos="10" freq="1" file="moco.out.xml"/>
+
+	<!-- Departure detectors -->
+	<inductionLoop id="505B_50E7" lane="-50846720#4_1" pos="15" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="512C_50FD" lane="-50846720#4_0" pos="15" freq="1" file="moco.out.xml"/>
+
+
+	<!-- Northside intersection -->
+    <!-- Stopbar detectors -->
+	<inductionLoop id="E58B" lane="243728742#0.50_0" pos="100" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="ECB0" lane="243728742#0.50_1" pos="100" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E10D" lane="243728742#0.50_2" pos="100" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="EBE8" lane="243728742#0.50_3" pos="100" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E3CE" lane="243728742#0.50_4" pos="100" freq="1" file="moco.out.xml"/>
+
+	<inductionLoop id="EBC4" lane="243728742#0.50_0" pos="89" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E482" lane="243728742#0.50_1" pos="89" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="EC40" lane="243728742#0.50_2" pos="89" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="EA0B" lane="243728742#0.50_3" pos="89" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E745" lane="243728742#0.50_4" pos="89" freq="1" file="moco.out.xml"/>
+
+	<!-- Advance detectors -->
+	<inductionLoop id="E79B" lane="243728742#0_0" pos="19" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="EA67" lane="243728742#0_1" pos="19" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E2B4" lane="243728742#0_2" pos="19" freq="1" file="moco.out.xml"/>
+
+	<!-- Departure detectors NEED TO ASK ZAHRA ABOUT THIS ITS INCONSISTENT BETWEEN THE DATA AND THE PICTURES PROVIDED
+	<inductionLoop id="505B_50E7" lane="-50846720#4_1" pos="15" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="512C_50FD" lane="-50846720#4_0" pos="15" freq="1" file="moco.out.xml"/> -->
+
+	<!-- Northside intersection -->
+    <!-- Stopbar detectors -->
+    <inductionLoop id="E359" lane="243728741#3.83_2" pos="24" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E45B" lane="243728741#3.83_1" pos="24" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E62C" lane="243728741#3.83_0" pos="24" freq="1" file="moco.out.xml"/>
+
+	<inductionLoop id="E8A3" lane="243728741#3.83_2" pos="13" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E10E" lane="243728741#3.83_1" pos="13" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E2A7" lane="243728741#3.83_0" pos="13" freq="1" file="moco.out.xml"/>
+
+	<!-- Advance detectors -->
+	<inductionLoop id="E10C" lane="243728741#2_1" pos="56" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E3D2" lane="243728741#2_0" pos="56" freq="1" file="moco.out.xml"/>
+
+	<!-- Departure detectors -->
+	<inductionLoop id="5137" lane="243728741#4_1" pos="11" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="51E1" lane="243728741#4_0" pos="11" freq="1" file="moco.out.xml"/>
+
+
+	<!-- Eastside intersection -->
+    <!-- Stopbar detectors -->
+    <inductionLoop id="E95D" lane="50846720#4.128_0" pos="79" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="ECAE" lane="50846720#4.128_1" pos="79" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E76B" lane="50846720#4.128_2" pos="79" freq="1" file="moco.out.xml"/>
+
+	<inductionLoop id="EC38" lane="50846720#4.128_0" pos="68" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E9F9" lane="50846720#4.128_1" pos="68" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E43A" lane="50846720#4.128_2" pos="68" freq="1" file="moco.out.xml"/>
+
+	<!-- Advance detectors -->
+	<inductionLoop id="E664" lane="50846720#4_0" pos="77" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E941" lane="50846720#4_1" pos="77" freq="1" file="moco.out.xml"/>
+
+	<!-- Departure detectors -->
+	<inductionLoop id="53A3_539D" lane="50846720#6_0" pos="25" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="539B_5317" lane="50846720#6_1" pos="25" freq="1" file="moco.out.xml"/>
+
+	<!-- ############################################################################################################################################################  -->
+	<!-- ############################################################################################################################################################  -->
+
+
+	<!-- #######################################################Montrose Rd & Montrose Pkwy #######################################################  -->
+    <!--
+    <tlLogic id="cluster_290051912_298136030_648538909" type="static" programID="10" offset="3">
+        <phase duration="75" state="gGGGGGggg"/>
+        <phase duration="6" state="gyyyGGggg"/>
+        <phase duration="33" state="GrrrGGGGG"/>
+        <phase duration="6" state="yrrrGGyyy"/>
+    </tlLogic>
+    -->
+
+	<!-- Westside intersection -->
+    <!-- Stopbar detectors -->
+	<inductionLoop id="EB0B" lane="26467810.54_4" pos="113" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E357" lane="26467810.54_3" pos="113" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E2F2" lane="26467810.54_2" pos="113" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="EBAC" lane="26467810.54_1" pos="113" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="EC0E" lane="26467810.54_0" pos="113" freq="1" file="moco.out.xml"/>
+
+	<inductionLoop id="E571" lane="26467810.54_4" pos="104" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E58C" lane="26467810.54_3" pos="104" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E568" lane="26467810.54_2" pos="104" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="EBE6" lane="26467810.54_1" pos="104" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E06D" lane="26467810.54_0" pos="104" freq="1" file="moco.out.xml"/>
+
+	<!-- Advance detectors  -->
+	<inductionLoop id="E1C7" lane="26467810_2" pos="15" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E7CE" lane="26467810_1" pos="15" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="EA33" lane="26467810_0" pos="15" freq="1" file="moco.out.xml"/> 
+
+	<!-- Departure detectors -->
+	<inductionLoop id="3F37_3EA1" lane="116069261_1" pos="52" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="40D6_4C37" lane="116069261_0" pos="52" freq="1" file="moco.out.xml"/>
+
+
+    <!-- Eastside intersection -->
+    <!-- Stopbar detectors -->
+    <inductionLoop id="E430" lane="50846753.54_0" pos="91" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="EA7C" lane="50846753.54_1" pos="91" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E2F0" lane="50846753.54_2" pos="91" freq="1" file="moco.out.xml"/>
+
+	<inductionLoop id="E822" lane="50846753.54_0" pos="82" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E8C7" lane="50846753.54_1" pos="82" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E3CA" lane="50846753.54_2" pos="82" freq="1" file="moco.out.xml"/> 
+
+	<!-- Departure detectors -->
+	<inductionLoop id="5193_513F" lane="116069186#1_0" pos="2" freq="1" file="moco.out.xml"/> 
+	<inductionLoop id="5116_50BB" lane="116069186#1_1" pos="2" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="50B7_50A3" lane="116069186#1_2" pos="2" freq="1" file="moco.out.xml"/>
+
+	<!-- Advance detectors -->
+	<inductionLoop id="E465" lane="49187078#5.22_0" pos="673" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E35F" lane="49187078#5.22_1" pos="673" freq="1" file="moco.out.xml"/>
+
+
+	<!-- Northside intersection -->
+	<!-- Departure detectors -->
+	<inductionLoop id="4C42_4C66" lane="-50846769_2" pos="12" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="4C78_4EA5" lane="-50846769_1" pos="12" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="4ED6_4FA1" lane="-50846769_0" pos="12" freq="1" file="moco.out.xml"/>
+
+	<!-- ############################################################################################################################################################  -->
+	<!-- ############################################################################################################################################################  -->
+
+
+	<!-- #######################################################Montrose Rd & Towne Rd #######################################################  -->
+	<!--
+    <tlLogic id="49228579" type="static" programID="10" offset="0.0">
+        <phase duration="36" state="GGGgrrrGGGggrr"/>
+        <phase duration="6" state="yyygrrryyyggrr"/>
+        <phase duration="18" state="rrrGrrrrrrGGrr"/>
+        <phase duration="6" state="rrryrrrrrryyrr"/>
+        <phase duration="24" state="rrrrGGgrrrrrGg"/>
+        <phase duration="6" state="rrrryygrrrrryg"/>
+        <phase duration="18" state="rrrrrrGrrrrrrG"/>
+        <phase duration="6" state="rrrrrryrrrrrry"/>
+    </tlLogic>
+	-->
+
+	<!-- Westside intersection -->
+    <!-- Stopbar detectors -->
+	<inductionLoop id="E13A" lane="-50846720#0_0" pos="27" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E21B" lane="142530980_1" pos="20" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="EC10" lane="142530980_0" pos="20" freq="1" file="moco.out.xml"/>
+
+
+	<inductionLoop id="E0A4" lane="-50846720#0_0" pos="18" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E1BC" lane="142530980_1" pos="11" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E4EA" lane="142530980_0" pos="11" freq="1" file="moco.out.xml"/>
+
+	<!-- Advance detectors  -->
+	<inductionLoop id="ECAA" lane="-50846720#2_1" pos="200" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="EBA1" lane="-50846720#2_0" pos="200" freq="1" file="moco.out.xml"/>
+
+	<!-- Departure detectors -->
+	<inductionLoop id="5023" lane="-143009954_1" pos="5" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="508D" lane="-143009954_0" pos="5" freq="1" file="moco.out.xml"/>
+
+
+    <!-- Eastside intersection -->
+    <!-- Stopbar detectors -->
+    <inductionLoop id="E2D8" lane="143009954_0" pos="63" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E2C3" lane="143009954_1" pos="63" freq="1" file="moco.out.xml"/>
+
+	<inductionLoop id="E145" lane="143009954_0" pos="54" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="EB23" lane="143009954_1" pos="54" freq="1" file="moco.out.xml"/>
+
+	<!-- Advance detectors -->
+	<inductionLoop id="E13B" lane="143009954_0" pos="37" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E377" lane="143009954_1" pos="37" freq="1" file="moco.out.xml"/>
+
+	<!-- Departure detectors -->
+	<inductionLoop id="4DCA_4D9E" lane="50846720#0_0" pos="12" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="4CFD_4CD1" lane="50846720#0_1" pos="12" freq="1" file="moco.out.xml"/>
+
+
+	<!-- Northside intersection -->
+    <!-- Stopbar detectors -->
+	<inductionLoop id="EBCB" lane="50846710#1.45_0" pos="68" freq="1" file="moco.out.xml"/> 
+	<inductionLoop id="E338" lane="50846710#1.45_1" pos="68" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E10F" lane="50846710#1.45_2" pos="68" freq="1" file="moco.out.xml"/>
+
+
+	<inductionLoop id="E66C" lane="50846710#1.45_0" pos="59" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E088" lane="50846710#1.45_1" pos="59" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E431" lane="50846710#1.45_2" pos="59" freq="1" file="moco.out.xml"/>
+
+	<!-- Advance detectors  -->
+	<inductionLoop id="E672" lane="50846710#1_0" pos="0" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E9BB" lane="50846710#1_1" pos="0" freq="1" file="moco.out.xml"/>
+
+	<!-- Departure detectors MAP AND SNSYS DATA DONT ALIGN - NOT SURE WHICH DETECTORS GO ON WHICH LANE 
+	<inductionLoop id="5023" lane="-50846713#2_0" pos="5" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="508D" lane="-50846713#2_1" pos="5" freq="1" file="moco.out.xml"/> -->
+
+	<!-- Southside intersection -->
+    <!-- Stopbar detectors -->
+	<inductionLoop id="EC06" lane="50846713#2_3" pos="2" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E7D1" lane="50846713#2_2" pos="2" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E93E" lane="50846713#2_1" pos="2" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E20D" lane="50846713#2_0" pos="2" freq="1" file="moco.out.xml"/>
+
+	<inductionLoop id="E73D" lane="50846713#1_3" pos="68" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E4A3" lane="50846713#1_2" pos="68" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E3D1" lane="50846713#1_1" pos="68" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E263" lane="50846713#1_0" pos="68" freq="1" file="moco.out.xml"/> <!--78-->
+
+
+	<!-- Advance detectors  -->
+	<inductionLoop id="EB1A" lane="50846713#1_3" pos="20" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E45A" lane="50846713#1_2" pos="20" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="EC9F" lane="50846713#1_1" pos="20" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E133" lane="50846713#1_0" pos="20" freq="1" file="moco.out.xml"/>
+
+	<!-- Departure detectors -->
+	<inductionLoop id="E0A5" lane="-142530979_1" pos="17" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E7AC" lane="-142530979_0" pos="17" freq="1" file="moco.out.xml"/>
+
+
+	<!-- ############################################################################################################################################################  -->
+	<!-- ############################################################################################################################################################  -->
+
+
+	<!-- #######################################################Montrose Pkwy & E Jefferson Rd #######################################################  -->
+    <!--
+    <tlLogic id="cluster_2511020102_2511020103_290051922_298135886" type="static" programID="10" offset="6">
+        <phase duration="22" state="rrrGGGggrrrrrrGGGgg"/>
+        <phase duration="4" state="rrryyyggrrrrrryyygg"/>
+        <phase duration="10" state="rrrrrrGGrrrrrrrrrGG"/>
+        <phase duration="4" state="rrrrrryyrrrrrrrrryy"/>
+        <phase duration="42" state="GggrrrrrGGGgggrrrrr"/>
+        <phase duration="4" state="yggrrrrryyygggrrrrr"/>
+        <phase duration="30" state="rGGrrrrrrrrGGGrrrrr"/>
+        <phase duration="4" state="ryyrrrrrrrryyyrrrrr"/>
+    </tlLogic>
+    -->
+
+	<!-- Westside intersection -->
+    <!-- Stopbar detectors -->
+	<inductionLoop id="E66B" lane="50846755#0.671_3" pos="64" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="DF3B" lane="50846755#0.671_2" pos="64" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E109" lane="50846755#0.671_1" pos="64" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E7CC" lane="50846755#0.671_0" pos="64" freq="1" file="moco.out.xml"/>
+
+	<inductionLoop id="E2F3" lane="50846755#0.671_3" pos="55" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E2E1" lane="50846755#0.671_2" pos="55" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E9D4" lane="50846755#0.671_1" pos="55" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="EC28" lane="50846755#0.671_0" pos="55" freq="1" file="moco.out.xml"/>
+
+	<!-- Advance detectors  -->
+	<inductionLoop id="E2AB" lane="50846755#0.517_2" pos="96" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="EC91" lane="50846755#0.517_1" pos="96" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="EBD6" lane="50846755#0.517_0" pos="96" freq="1" file="moco.out.xml"/>
+
+
+	<!-- Departure detectors -->
+	<inductionLoop id="4B44_4C53" lane="50846755#2.0_1" pos="18" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="4D3B_4D6A" lane="50846755#2.0_0" pos="18" freq="1" file="moco.out.xml"/>
+
+
+	<!-- Eastside intersection -->
+    <!-- Stopbar detectors -->
+	<inductionLoop id="E2F5" lane="49187078#3.591_0" pos="57" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="EBE3" lane="49187078#3.591_1" pos="57" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E478" lane="49187078#3.591_2" pos="57" freq="1" file="moco.out.xml"/>
+
+	<inductionLoop id="E432" lane="49187078#3.591_0" pos="48" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="DFD5" lane="49187078#3.591_1" pos="48" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E817" lane="49187078#3.591_2" pos="48" freq="1" file="moco.out.xml"/>
+
+	<!-- Advance detectors  -->
+	<inductionLoop id="E0A1" lane="49187078#3_0" pos="501" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E147" lane="49187078#3_1" pos="501" freq="1" file="moco.out.xml"/>
+
+
+	<!-- Departure detectors -->
+	<inductionLoop id="4DE7_4DCE" lane="49187078#5.22_0" pos="9" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="4DBB_4D9B" lane="49187078#5.22_1" pos="9" freq="1" file="moco.out.xml"/>
+
+
+
+
+	<!-- Southside intersection -->
+    <!-- Stopbar detectors -->
+	<inductionLoop id="E65F" lane="243728741#0_3" pos="100" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E7E7" lane="243728741#0_2" pos="100" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="EB62" lane="243728741#0_1" pos="100" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E124" lane="243728741#0_0" pos="100" freq="1" file="moco.out.xml"/>
+
+	<inductionLoop id="E21A" lane="243728741#0_3" pos="91" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E488" lane="243728741#0_2" pos="91" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="ECC3" lane="243728741#0_1" pos="91" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E033" lane="243728741#0_0" pos="91" freq="1" file="moco.out.xml"/>
+
+	<!-- Advance detectors  -->
+	<inductionLoop id="E604" lane="243728741#0_3" pos="14" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="EBA5" lane="243728741#0_2" pos="14" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="EBE7" lane="243728741#0_1" pos="14" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="EB9E" lane="243728741#0_0" pos="14" freq="1" file="moco.out.xml"/>
+
+	<!-- Departure detectors -->
+	<inductionLoop id="4E44" lane="243728741#2_1" pos="5" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="5041" lane="243728741#2_0" pos="5" freq="1" file="moco.out.xml"/>
+
+
+	<!-- Northside intersection -->
+    <!-- Stopbar detectors -->
+	<inductionLoop id="E3CB" lane="gneE16_0" pos="4" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E09F" lane="243728742#2.47_0" pos="8" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="EADF" lane="243728742#2.47_1" pos="8" freq="1" file="moco.out.xml"/>
+
+	<inductionLoop id="E0D7" lane="gneE15_0" pos="0" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E772" lane="243728742#2.0_0" pos="35" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E4CC" lane="243728742#2.0_1" pos="35" freq="1" file="moco.out.xml"/>
+
+	<!-- Advance detectors  -->
+	<inductionLoop id="E821" lane="243728742#1_0" pos="42" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E49F" lane="243728742#1_1" pos="42" freq="1" file="moco.out.xml"/>
+
+
+	<!-- Departure detectors -->
+	<inductionLoop id="509D" lane="243728742#4_0" pos="5" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="5097" lane="243728742#4_1" pos="5" freq="1" file="moco.out.xml"/>
+
+
+	<!-- ############################################################################################################################################################  -->
+	<!-- ############################################################################################################################################################  -->
+
+
+	<!-- #######################################################Montrose Pkwy & Towne Rd #######################################################  -->
+	<!--
+    <tlLogic id="cluster_648538736_648538737" type="static" programID="10" offset="79">
+        <phase duration="40" state="rrrrGGGGggrrrrrrGGGgggg"/>
+        <phase duration="6" state="rrrryyyyggrrrrrryyygggg"/>
+        <phase duration="12" state="rrrrrrrrGGrrrrrrrrrGGGG"/>
+        <phase duration="6" state="rrrrrrrryyrrrrrrrrryyyy"/>
+        <phase duration="32" state="GGggrrrrrrGGGGGgrrrrrrr"/>
+        <phase duration="6" state="yyggrrrrrryyyyygrrrrrrr"/>
+        <phase duration="12" state="rrGGrrrrrrrrrrrGrrrrrrr"/>
+        <phase duration="6" state="rryyrrrrrrrrrrryrrrrrrr"/>
+    </tlLogic>
+    -->
+    
+	<!-- Westside intersection -->
+    <!-- Stopbar detectors -->
+	<inductionLoop id="E5AF" lane="50846755#2.0.590_2" pos="52" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="EC3D" lane="50846755#2.0.590_1" pos="52" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E9FF" lane="50846755#2.0.590_0" pos="52" freq="1" file="moco.out.xml"/>
+
+	<inductionLoop id="E6F8" lane="50846755#2.0.590_2" pos="43" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E075" lane="50846755#2.0.590_1" pos="43" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E853" lane="50846755#2.0.590_0" pos="43" freq="1" file="moco.out.xml"/>
+
+	<!-- Advance detectors  -->
+	<inductionLoop id="E802" lane="50846755#2.0_1" pos="498" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="ECA8" lane="50846755#2.0_0" pos="498" freq="1" file="moco.out.xml"/>
+
+	<!-- Departure detectors -->
+	<inductionLoop id="418C_41DA" lane="50846755#3_1" pos="10" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="EA66_EB43" lane="50846755#3_0" pos="10" freq="1" file="moco.out.xml"/> 
+
+
+	<!-- Eastside intersection -->
+    <!-- Stopbar detectors -->
+	<inductionLoop id="E4C4" lane="gneE17.147_0" pos="108" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E820" lane="gneE17.147_1" pos="108" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E966" lane="gneE17.147_2" pos="108" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="EBAB" lane="gneE17.147_3" pos="108" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E45C" lane="gneE17.147_4" pos="108" freq="1" file="moco.out.xml"/>
+
+	<inductionLoop id="E3B1" lane="gneE17.147_0" pos="99" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E67B" lane="gneE17.147_1" pos="99" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E670" lane="gneE17.147_2" pos="99" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E335" lane="gneE17.147_3" pos="99" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E9BF" lane="gneE17.147_4" pos="99" freq="1" file="moco.out.xml"/>
+
+
+	<!-- Advance detectors  -->
+	<inductionLoop id="D966" lane="gneE17_0" pos="132" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E262" lane="gneE17_1" pos="132" freq="1" file="moco.out.xml"/>
+
+
+	<!-- Departure detectors -->
+	<inductionLoop id="4B85_4B6A" lane="49187078#3_0" pos="16" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="4B53_4AB8" lane="49187078#3_1" pos="16" freq="1" file="moco.out.xml"/> 
+
+
+
+	<!-- Southside intersection -->
+    <!-- Stopbar detectors -->
+	<inductionLoop id="1" lane="5974128_1" pos="144" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="2" lane="5974128_0" pos="144" freq="1" file="moco.out.xml"/>
+
+	<inductionLoop id="4" lane="5974128_1" pos="135" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="5" lane="5974128_0" pos="135" freq="1" file="moco.out.xml"/>
+
+
+	<!-- Advance detectors  -->
+	<inductionLoop id="3" lane="5974128_1" pos="63" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="6" lane="5974128_0" pos="63" freq="1" file="moco.out.xml"/>
+
+
+	<!-- Departure detectors -->
+	<inductionLoop id="DD80" lane="50846713#1_3" pos="8" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="DEF8" lane="50846713#1_2" pos="8" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E2DC" lane="50846713#1_1" pos="8" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="DFA0" lane="50846713#1_0" pos="8" freq="1" file="moco.out.xml"/>
+
+
+	<!-- Northside intersection -->
+    <!-- Stopbar detectors -->
+	<inductionLoop id="EA5A" lane="-50846713#1_0" pos="65" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="D939" lane="-50846713#1_1" pos="65" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E856" lane="-50846713#1_2" pos="65" freq="1" file="moco.out.xml"/>
+
+
+	<inductionLoop id="E314" lane="-50846713#1_0" pos="58" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="EC0B" lane="-50846713#1_1" pos="58" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E373" lane="-50846713#1_2" pos="58" freq="1" file="moco.out.xml"/>
+
+
+	<!-- Advance detectors  -->
+	<inductionLoop id="EBAD" lane="-50846713#1_0" pos="27" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="ECC6" lane="-50846713#1_1" pos="27" freq="1" file="moco.out.xml"/>
+	<inductionLoop id="E11D" lane="-50846713#1_2" pos="27" freq="1" file="moco.out.xml"/>
+
+
+	<!-- Departure detectors -->
+	<inductionLoop id="48CF" lane="-5974128_0" pos="6" freq="1" file="moco.out.xml"/>
+</additional>

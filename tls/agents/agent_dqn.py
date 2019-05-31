@@ -15,7 +15,7 @@ from ray.tune import function
 from tls.agents.models import register_model
 from tls.environment.sumo import SUMOEnv
 
-_NETWORK_PATH = '/home/gosha/workspace/pycharm/adaptive-tls/tls/networks/montgomery_county/'
+_NETWORK_PATH = '/home/gosha/workspace/pycharm/adaptive-tls/networks/montgomery_county/'
 
 
 def on_episode_end(info):

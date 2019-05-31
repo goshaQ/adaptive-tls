@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
+
+    <input>
+        <net-file value="moco.net.xml"/>
+        <route-files value="moco_jtr_out.rou.xml"/>
+	<!--
+        <route-files value="moco.rou.xml"/>
+	<route-files value="moco_jtr.rou.xml"/>
+	-->
+        <additional-files value="moco.det.xml" />
+    </input>
+
+    <time>
+        <begin value="0"/>
+        <end value="7300"/>
+    </time>
+
+    <processing>
+        <time-to-teleport value="300"/>
+    </processing>
+
+    <output>
+	    <!--
+        <tripinfo-output value="tripinfo.xml"/>
+	<queue-output value="queues.xml"/>
+-->
+	<queue-output value="queues.xml"/>
+    </output>
+
+</configuration>
