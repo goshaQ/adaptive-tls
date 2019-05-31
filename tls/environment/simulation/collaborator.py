@@ -72,22 +72,19 @@ class Collaborator:
         if actions is None:
             self.simulation_time += SIMULATION_STEP
             self.connection.simulationStep(step=self.simulation_time)
-            self.total_vehicles.append(
-                self.connection.simulation.getMinExpectedNumber())
+            self._collect_simulation_results()
         else:
             self._apply_actions(actions, prepare=True)
 
             self.simulation_time += YELLOW_TIME
             self.connection.simulationStep(step=self.simulation_time)
-            self.total_vehicles.append(
-                sum(self.connection.simulation.getSubscriptionResults().values()))
+            self._collect_simulation_results()
 
             self._apply_actions(actions)
 
             self.simulation_time += SIMULATION_STEP - YELLOW_TIME
             self.connection.simulationStep(step=self.simulation_time)
-            self.total_vehicles.append(
-                sum(self.connection.simulation.getSubscriptionResults().values()))
+            self._collect_simulation_results()
 
         observations = self.compute_observations()
         rewards = self.compute_rewards()
@@ -96,12 +93,17 @@ class Collaborator:
 
         return observations, rewards, done, info
 
-    # TODO: Needs to be used during evaluation
-    # def update_metrics(self):
-    #     subscription = self.connection.simulation.getSubscriptionResults()
-    #     self.total_vehicles.append(sum(subscription.values()))
-    #     self.total_departed += subscription[0x73]
-    #     self.total_arrived += subscription[0x79]
+    def _collect_simulation_results(self):
+        # Update the sum of departed and arrived vehicles
+        self.total_vehicles.append(
+            sum(self.connection.simulation.getSubscriptionResults().values()))
+
+        # Accumulate all the rewards
+        for trafficlight in self.trafficlights.values():
+            try:
+                trafficlight.update_throughput()
+            except ValueError:  # Some trafficlights might not have ILVD
+                continue
 
     def is_finished(self):
         if self.connection.simulation.getMinExpectedNumber() == 0:
@@ -120,12 +122,13 @@ class Collaborator:
             prepare: whether the state need to be actually changed (Default: False).
         """
 
-        if prepare:
-            for trafficlight_id, action in actions.items():
-                self.trafficlights[trafficlight_id].set_next_phase(action)
-        else:
-            for trafficlight_id in actions:
-                self.trafficlights[trafficlight_id].update_phase()
+        for trafficlight_id, action in actions.items():
+            trafficlight = self.trafficlights[trafficlight_id]
+
+            if prepare:
+                trafficlight.set_next_phase(action)
+            else:
+                trafficlight.update_phase()
 
     def compute_observations(self):
         r"""Collects observations from each intersection.
@@ -163,10 +166,7 @@ class Collaborator:
     def _throughput_reward(self):
         rewards = {}
         for trafficlight_id, trafficlight in self.trafficlights.items():
-            try:
-                rewards[trafficlight_id] = trafficlight.get_throughput()
-            except ValueError:  # Some trafficlights might not have ILVD
-                rewards[trafficlight_id] = 0
+            rewards[trafficlight_id] = trafficlight.get_throughput()
         return rewards
 
     def close(self):

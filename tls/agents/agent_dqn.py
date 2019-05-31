@@ -93,7 +93,7 @@ if __name__ == '__main__':
                         help='Number of optimization iterations')
     parser.add_argument('--checkpoint-freq', type=int, default=100,
                         help='Frequence with which a checkpoint will be created')
-    parser.add_argument('--mode', choices=['train', 'eval'], default='eval',
+    parser.add_argument('--mode', choices=['train', 'eval'], default='train',
                         help='Execution mode')
     args = parser.parse_args()
 

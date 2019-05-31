@@ -22,10 +22,22 @@ class Trafficlight:
 
         self.lanes = [link[0][0] for link in connection.trafficlight.getControlledLinks(trafficlight_id)]
         self.prev_queue_length = 0
+        self.accumulated_throughput = 0
 
     def get_throughput(self):
+        r"""Returns throughput of a trafficlight.
+
+        :return: none.
+        """
+
+        result = self.accumulated_throughput
+        self.accumulated_throughput = 0
+
+        return result
+
+    def update_throughput(self):
         r"""Computes throughput of a trafficlight based on stop bar detectors information.
-        The returned number of cars that passed through intersection equal to the number
+        The accumulated number of cars that passed through intersection equal to the number
         of cars passed since the last call of the method.
 
         :return: throughput of a junction.
@@ -38,10 +50,8 @@ class Trafficlight:
             for loop_id in segment[' Departure detectors ']:
                 traffic.update(self.connection.inductionloop.getLastStepVehicleIDs(loop_id))
 
-        throughput = len(traffic - self.prev_traffic)
+        self.accumulated_throughput += len(traffic - self.prev_traffic)
         self.prev_traffic = traffic
-
-        return throughput
 
     def get_queue_length(self):
         r"""Computes the difference of sums of queues at each line on the intersection between
