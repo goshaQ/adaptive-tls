@@ -13,6 +13,9 @@ class Observer:
         trafficlight_skeleton (dict{id: skeleton}): internal representation of trafficlights within the road network.
     """
 
+    # Depends on number of layers returned
+    _OBS_SHAPE = (c.MESH_SIZE, c.MESH_SIZE, 2)
+
     # Center of the regulated intersection
     _CENTER = ((c.MESH_SIZE - 1) // 2,) * 2
 
@@ -34,7 +37,7 @@ class Observer:
 
     def __init__(self, connection, trafficlight_skeleton):
         self.connection = connection
-        self.current_observation = np.zeros((c.MESH_SIZE, c.MESH_SIZE, 1))
+        self.current_observation = np.zeros(Observer._OBS_SHAPE)
 
         self.trafficlight_id = trafficlight_skeleton['id']
         self.trafficlight_skeleton = trafficlight_skeleton
@@ -205,7 +208,7 @@ class Observer:
         :return: none.
         """
 
-        self.current_observation = np.zeros((c.MESH_SIZE, c.MESH_SIZE, 1))
+        self.current_observation = np.zeros(Observer._OBS_SHAPE)
 
         for junction, relative_offset in self.topology:
             polygon = self._get_junction_polygon(junction, relative_offset)
@@ -231,7 +234,13 @@ class Observer:
                             if not np.array_equal(idx, self._clamp(idx, min=0, max=c.MESH_SIZE - 1)):
                                 continue
 
-                            self.current_observation[tuple(idx)][0] = 1
+                            max_speed = self.connection.lane.getMaxSpeed(lane)
+
+                            result = np.zeros(self._OBS_SHAPE[-1])
+                            result[0] = 1
+                            result[1] = self.connection.vehicle.getSpeed(vehicle) / max_speed
+                            # result[2] = self.connection.vehicle.getAcceleration(vehicle) / max_speed
+                            self.current_observation[tuple(idx)] = result
                     cursor += step
         return self.current_observation
 

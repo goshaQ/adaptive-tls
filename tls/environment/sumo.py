@@ -29,7 +29,7 @@ class SUMOEnv(MultiAgentEnv):
         use_gui (bool): whether to run SUMO simulation with GUI visualisation.
     """
 
-    def __init__(self, net_file, config_file, additional_file, use_gui=True):
+    def __init__(self, net_file, config_file, additional_file, parametric=True, use_gui=True):
         self.trafficlight_skeletons = {}
         self.trafficlight_ids = []
         self.action_space = None
@@ -60,7 +60,7 @@ class SUMOEnv(MultiAgentEnv):
         tmp = Collaborator(traci.getConnection(), self.trafficlight_skeletons, self.additional)
 
         self.observation_space = spaces.Dict({
-            'obs': spaces.Box(low=0., high=1.,
+            'obs': spaces.Box(low=0., high=1.5,
                               shape=tmp.observation_space_shape, dtype=np.float32),
             'action_mask': spaces.Box(low=0, high=1,
                                       shape=tmp.action_space_shape, dtype=np.int32)

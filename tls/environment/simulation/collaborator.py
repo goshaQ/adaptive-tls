@@ -69,19 +69,25 @@ class Collaborator:
             actions: dictionary with action for each agent.
         """
 
-        self._apply_actions(actions, prepare=True)
+        if actions is None:
+            self.simulation_time += SIMULATION_STEP
+            self.connection.simulationStep(step=self.simulation_time)
+            self.total_vehicles.append(
+                self.connection.simulation.getMinExpectedNumber())
+        else:
+            self._apply_actions(actions, prepare=True)
 
-        self.simulation_time += YELLOW_TIME
-        self.connection.simulationStep(step=self.simulation_time)
-        self.total_vehicles.append(
-            sum(self.connection.simulation.getSubscriptionResults().values()))
+            self.simulation_time += YELLOW_TIME
+            self.connection.simulationStep(step=self.simulation_time)
+            self.total_vehicles.append(
+                sum(self.connection.simulation.getSubscriptionResults().values()))
 
-        self._apply_actions(actions)
+            self._apply_actions(actions)
 
-        self.simulation_time += SIMULATION_STEP - YELLOW_TIME
-        self.connection.simulationStep(step=self.simulation_time)
-        self.total_vehicles.append(
-            sum(self.connection.simulation.getSubscriptionResults().values()))
+            self.simulation_time += SIMULATION_STEP - YELLOW_TIME
+            self.connection.simulationStep(step=self.simulation_time)
+            self.total_vehicles.append(
+                sum(self.connection.simulation.getSubscriptionResults().values()))
 
         observations = self.compute_observations()
         rewards = self.compute_rewards()
@@ -89,6 +95,13 @@ class Collaborator:
         info = {}
 
         return observations, rewards, done, info
+
+    # TODO: Needs to be used during evaluation
+    # def update_metrics(self):
+    #     subscription = self.connection.simulation.getSubscriptionResults()
+    #     self.total_vehicles.append(sum(subscription.values()))
+    #     self.total_departed += subscription[0x73]
+    #     self.total_arrived += subscription[0x79]
 
     def is_finished(self):
         if self.connection.simulation.getMinExpectedNumber() == 0:
@@ -129,7 +142,7 @@ class Collaborator:
 
             observations[trafficlight_id] = {
                 'obs': observer.get_observation(),
-                'action_mask': action_mask
+                'action_mask': action_mask,
             }
         return observations
 

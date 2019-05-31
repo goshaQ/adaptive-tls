@@ -7,7 +7,7 @@ MESH_SIZE = 32
 MESH_PARTITIONING_STEP = 6
 
 # Duration T of the simulation step; s
-SIMULATION_STEP = 5
+SIMULATION_STEP = 5.
 
 # Minimum duration of a green light; s
 MIN_GREEN = 15

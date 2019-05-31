@@ -9,6 +9,7 @@ class AdaptiveTrafficlightModel(Model):
         raise DeprecationWarning
 
     def _build_layers_v2(self, input_dict, num_outputs, options):
+        is_training = input_dict['is_training']
         inputs = input_dict['obs']
         obs, action_mask = inputs['obs'], inputs['action_mask']
 
@@ -51,9 +52,15 @@ class AdaptiveTrafficlightModel(Model):
             activation=tf.nn.relu
         )
 
+        dropout = tf.layers.dropout(
+            inputs=dense,
+            rate=0.4,
+            training=is_training
+        )
+
         # Dense2 Layer --: num_outputs
         logits = tf.layers.dense(
-            inputs=dense,
+            inputs=dropout,
             units=num_outputs,
             activation=None
         )

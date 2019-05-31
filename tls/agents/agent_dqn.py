@@ -1,11 +1,13 @@
 import sys
 import ray
 import subprocess
+import numpy as np
 
+from gym import spaces
 from argparse import ArgumentParser
 
-
 from ray.rllib.agents.dqn import DQNTrainer
+from ray.rllib.agents.dqn.dqn_policy_graph import DQNPolicyGraph
 from ray.tune.logger import pretty_print
 from ray.tune.registry import register_env
 from ray.tune import function
@@ -23,6 +25,14 @@ def on_episode_end(info):
 
 
 def train(num_iters, checkpoint_freq):
+    obs_space = spaces.Dict({
+        'obs': spaces.Box(low=0., high=1.5,
+                          shape=(32, 32, 2), dtype=np.float32),
+        'action_mask': spaces.Box(low=0, high=1,
+                                  shape=(5,), dtype=np.int32)
+    })
+    act_space = spaces.Discrete(n=5)
+
     trainer = DQNTrainer(
         env='SUMOEnv-v0',
         config={
@@ -30,13 +40,24 @@ def train(num_iters, checkpoint_freq):
                 'custom_model': 'adaptive-trafficlight',
                 "custom_options": {},
             },
+            'multiagent': {
+                'policy_graphs': {
+                    'default_policy_graph': (
+                        DQNPolicyGraph,
+                        obs_space,
+                        act_space,
+                        {},
+                    ),
+                },
+                'policy_mapping_fn': function(lambda _: 'default_policy_graph'),
+            },
             'hiddens': [],  # Don't postprocess the action scores
             'callbacks': {
                 'on_episode_end': function(on_episode_end),
             },
             # 'num_workers': 4,
             # 'num_gpus_per_worker': 0.25,  # All workers on a single GPU
-            'timesteps_per_iteration': 16000,
+            'timesteps_per_iteration': 20000,
         }
     )
 
@@ -44,7 +65,7 @@ def train(num_iters, checkpoint_freq):
         print(f'== Iteration {i}==')
         print(pretty_print(trainer.train()))
 
-        if i % checkpoint_freq:
+        if i % checkpoint_freq == 0:
             checkpoint = trainer.save()
             print(f'\nCheckpoint saved at {checkpoint}\n')
 
@@ -90,4 +111,5 @@ if __name__ == '__main__':
         # Train the agent
         train(args.num_iters, args.checkpoint_freq)
     elif args.mode == 'eval':
-        rollout('/home/gosha/ray_results/DQN_SUMOEnv-v0_NO_TUNING_24h/')  # Should be replaced
+        rollout('/home/gosha/ray_results/DQN_SUMOEnv-v0_MULTIAGENT_24h/'
+                'checkpoint_1/checkpoint-1')  # Should be replaced

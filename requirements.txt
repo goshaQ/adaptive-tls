@@ -1,0 +1,6 @@
+tensorflow
+ray[rllib]
+bs4
+lxml
+gym
+numpy

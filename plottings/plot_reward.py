@@ -35,7 +35,7 @@ def extract_results(_filepath):
 
 if __name__ == '__main__':
     filepaths = [
-        '/home/gosha/ray_results/DQN_SUMOEnv-v0_NO_TUNING_24h/result.json',  # DQN Agent
+        '/home/gosha/ray_results/DQN_SUMOEnv-v0_NO_TUNING_24h/result3.json',  # DQN Agent
     ]
 
     agents = ['DQN', '', '']
@@ -55,7 +55,7 @@ if __name__ == '__main__':
 
     plt.ylabel('Episode mean reward (Throughput)', fontsize=11)
     plt.xlabel('Time elapsed (Hours)', fontsize=11)
-    plt.legend(loc="upper right", prop={'size': 11}, bbox_to_anchor=(1.25, 1))
+    plt.legend(loc="lower right", prop={'size': 11})
     plt.grid(True)
     plt.tight_layout()
     plt.show()
