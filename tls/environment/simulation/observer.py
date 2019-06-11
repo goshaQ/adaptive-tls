@@ -235,12 +235,13 @@ class Observer:
                                 continue
 
                             max_speed = self.connection.lane.getMaxSpeed(lane)
+                            i, k = idx
 
-                            result = np.zeros(self._OBS_SHAPE[-1])
-                            result[0] = 1
-                            result[1] = self.connection.vehicle.getSpeed(vehicle) / max_speed
-                            # result[2] = self.connection.vehicle.getAcceleration(vehicle) / max_speed
-                            self.current_observation[tuple(idx)] = result
+                            self.current_observation[i, k, 0] = 1
+                            self.current_observation[i, k, 1] = \
+                                self.connection.vehicle.getSpeed(vehicle) / max_speed
+                            self.current_observation[i, k, 2] = \
+                                self.connection.vehicle.getAcceleration(vehicle) / max_speed
                     cursor += step
         return self.current_observation
 

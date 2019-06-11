@@ -26,8 +26,8 @@ def on_episode_end(info):
 
 def train(num_iters, checkpoint_freq):
     obs_space = spaces.Dict({
-        'obs': spaces.Box(low=0., high=1.5,
-                          shape=(32, 32, 2), dtype=np.float32),
+        'obs': spaces.Box(low=-0.5, high=1.5,
+                          shape=(32, 32, 3), dtype=np.float32),
         'action_mask': spaces.Box(low=0, high=1,
                                   shape=(5,), dtype=np.int32)
     })
@@ -38,7 +38,7 @@ def train(num_iters, checkpoint_freq):
         config={
             'model': {
                 'custom_model': 'adaptive-trafficlight',
-                "custom_options": {},
+                'custom_options': {},
             },
             'multiagent': {
                 'policy_graphs': {
@@ -70,7 +70,7 @@ def train(num_iters, checkpoint_freq):
             print(f'\nCheckpoint saved at {checkpoint}\n')
 
 
-def rollout(checkpoint_path, env='SUMOEnv-v0', steps=1000):
+def rollout(checkpoint_path, env='SUMOEnv-v0', steps=9999):
     subprocess.call([
         sys.executable,
         '../rollout.py', checkpoint_path,
@@ -93,7 +93,7 @@ if __name__ == '__main__':
                         help='Number of optimization iterations')
     parser.add_argument('--checkpoint-freq', type=int, default=100,
                         help='Frequence with which a checkpoint will be created')
-    parser.add_argument('--mode', choices=['train', 'eval'], default='train',
+    parser.add_argument('--mode', choices=['train', 'eval'], default='eval',
                         help='Execution mode')
     args = parser.parse_args()
 
@@ -111,5 +111,5 @@ if __name__ == '__main__':
         # Train the agent
         train(args.num_iters, args.checkpoint_freq)
     elif args.mode == 'eval':
-        rollout('/home/gosha/ray_results/DQN_SUMOEnv-v0_MULTIAGENT_24h/'
+        rollout('/home/gosha/ray_results/DQN_SUMOEnv-v0_2019-06-01_00-35-2479dvwp0d/'
                 'checkpoint_1/checkpoint-1')  # Should be replaced

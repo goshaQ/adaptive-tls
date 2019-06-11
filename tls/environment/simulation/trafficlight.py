@@ -47,8 +47,8 @@ class Trafficlight:
 
         traffic = set()
         for segment in self.additional.values():
-            for loop_id in segment[' Departure detectors ']:
-                traffic.update(self.connection.inductionloop.getLastStepVehicleIDs(loop_id))
+            for detector_id in segment[' Departure detectors ']['inductionLoop']:
+                traffic.update(self.connection.inductionloop.getLastStepVehicleIDs(detector_id))
 
         self.accumulated_throughput += len(traffic - self.prev_traffic)
         self.prev_traffic = traffic

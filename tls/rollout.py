@@ -36,10 +36,11 @@ from ray.tune.registry import register_env
 from tls.environment.sumo import SUMOEnv
 from tls.agents.models import register_model
 
+_NETWORK_PATH = '/home/gosha/workspace/pycharm/adaptive-tls/networks/montgomery_county/'
 
-register_env('SUMOEnv-v0', lambda _: SUMOEnv(net_file='/home/gosha/Загрузки/network/moco.net.xml',
-                                             config_file='/home/gosha/Загрузки/network/testmap.sumocfg',
-                                             additional_file='/home/gosha/Загрузки/network/moco.det.xml',
+register_env('SUMOEnv-v0', lambda _: SUMOEnv(net_file=_NETWORK_PATH + 'moco.net.xml',
+                                             config_file=_NETWORK_PATH + 'testmap.sumocfg',
+                                             additional_file=_NETWORK_PATH + 'moco.det.xml',
                                              use_gui=True))
 register_model()
 
@@ -133,69 +134,79 @@ def rollout(agent, env_name, num_steps, out=None, no_render=True):
         multiagent = False
         use_lstm = {'default': False}
 
-    if out is not None:
-        rollouts = []
     steps = 0
-    while steps < (num_steps or steps + 1):
-        if out is not None:
-            rollout = []
-        state = env.reset()
-        done = False
-        reward_total = 0.0
-        reward_for_each = collections.defaultdict(int)
-        while not done and steps < (num_steps or steps + 1):
-            if multiagent:
-                action_dict = {}
-                for agent_id in state.keys():
-                    a_state = state[agent_id]
-                    if a_state is not None:
-                        policy_id = mapping_cache.setdefault(
-                            agent_id, policy_agent_mapping(agent_id))
-                        p_use_lstm = use_lstm[policy_id]
-                        if p_use_lstm:
-                            a_action, p_state_init, _ = agent.compute_action(
-                                a_state,
-                                state=state_init[policy_id],
-                                policy_id=policy_id)
-                            state_init[policy_id] = p_state_init
-                        else:
-                            a_action = agent.compute_action(
-                                a_state, policy_id=policy_id)
-                        action_dict[agent_id] = a_action
-                action = action_dict
+    if out is not None:
+        rollout = []
+    state = env.reset()
+    done = False
+    reward_total = 0.0
+    reward_for_each = collections.defaultdict(int)
+    statistics = []
+    time = -5
+    while not done and steps < (num_steps or steps + 1):
+        if multiagent:
+            action_dict = {}
+            for agent_id in state.keys():
+                a_state = state[agent_id]
+                if a_state is not None:
+                    policy_id = mapping_cache.setdefault(
+                        agent_id, policy_agent_mapping(agent_id))
+                    p_use_lstm = use_lstm[policy_id]
+                    if p_use_lstm:
+                        a_action, p_state_init, _ = agent.compute_action(
+                            a_state,
+                            state=state_init[policy_id],
+                            policy_id=policy_id)
+                        state_init[policy_id] = p_state_init
+                    else:
+                        a_action = agent.compute_action(
+                            a_state, policy_id=policy_id)
+                    action_dict[agent_id] = a_action
+            action = action_dict
+        else:
+            if use_lstm["default"]:
+                action, state_init, _ = agent.compute_action(
+                    state, state=state_init)
             else:
-                if use_lstm["default"]:
-                    action, state_init, _ = agent.compute_action(
-                        state, state=state_init)
-                else:
-                    action = agent.compute_action(state)
+                action = agent.compute_action(state)
 
-            if agent.config["clip_actions"]:
-                clipped_action = clip_action(action, env.action_space)
-                next_state, reward, done, _ = env.step(clipped_action)
-            else:
-                next_state, reward, done, _ = env.step(action)
+        if agent.config["clip_actions"]:
+            clipped_action = clip_action(action, env.action_space)
+            next_state, reward, done, stat = env.step(clipped_action)
+        else:
+            next_state, reward, done, stat = env.step(action)
 
-            if multiagent:
-                done = done["__all__"]
-                reward_total += sum(reward.values())
-                for k, v in reward.items():
-                    reward_for_each[k] += v
-            else:
-                reward_total += reward
-            if not no_render:
-                env.render()
-            if out is not None:
-                rollout.append([state, action, next_state, reward, done])
-            steps += 1
-            state = next_state
+        if multiagent:
+            done = done["__all__"]
+            reward_total += sum(reward.values())
+            for k, v in reward.items():
+                reward_for_each[k] += v
+
+            time += 5
+
+            # Collect statistics
+            statistics.append({
+                'statistics': stat.copy(),
+                'episode_reward': reward_for_each.copy(),
+                'timestamp': time,
+            })
+        else:
+            reward_total += reward
+        if not no_render:
+            env.render()
         if out is not None:
-            rollouts.append(rollout)
-        print("Episode reward", reward_total)
-        print("Reward for each agent", reward_for_each)
+            rollout.append([state, action, next_state, reward, done])
+        steps += 1
+        state = next_state
+
+    print(f'Episode end statistics {env.collect_statistics_after_simulation()}')
+    print("Episode reward", reward_total)
+    print("Reward for each agent", reward_for_each)
+    with open('simulation_statistics.json', 'w') as f:
+        json.dump(statistics, f)
 
     if out is not None:
-        pickle.dump(rollouts, open(out, "wb"))
+        pickle.dump(rollout, open(out, "wb"))
 
 
 if __name__ == "__main__":

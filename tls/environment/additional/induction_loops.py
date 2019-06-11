@@ -13,23 +13,30 @@ def process_additional_file(path):
         trafficlight_id = re.search(pattern, trafficlight).group(1)
         intersections = {}
 
-        position_types = [' Westside intersection ', ' Eastside intersection ',
-                          ' Southside intersection ', ' Northside intersection ']
-        for position_type in position_types:
-            position = trafficlight.findNext(string=position_type)
+        positions = [' Westside intersection ', ' Eastside intersection ',
+                     ' Southside intersection ', ' Northside intersection ']
+        for position in positions:
+            position = trafficlight.findNext(string=position)
 
-            detector_types = [' Departure detectors ']
+            detector_locations = [' Departure detectors ', ' Stopbar detectors ']
             detectors = {}
-            for detector_type in detector_types:
-                detectors_ = position.findNext(string=detector_type)
+            for detector_location in detector_locations:
+                detectors_ = position.findNext(string=detector_location)
 
-                detectors[detector_type] = []
+                detector_types = {'inductionLoop': [], 'laneAreaDetector': []}
                 next_ = detectors_.next
                 while not (next_ is None or isinstance(next_, bs4.Comment)):
-                    if next_.name == 'inductionLoop':
-                        detectors[detector_type].append(next_.attrs['id'])
+                    if next_.name in detector_types:
+                        detector_types[next_.name].append(next_.attrs['id'])
                     next_ = next_.next
-            intersections[position_type] = detectors
+                detectors[detector_location] = detector_types
+            intersections[position] = detectors
 
         induction_loops[trafficlight_id] = intersections
     return induction_loops
+
+
+if __name__ == '__main__':
+    r = process_additional_file('/home/gosha/workspace/pycharm/adaptive-tls/'
+                                'networks/montgomery_county/moco.det.xml')
+    print(r['cluster_648538736_648538737'][' Westside intersection '][' Stopbar detectors '])

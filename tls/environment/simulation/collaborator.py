@@ -33,6 +33,7 @@ class Collaborator:
 
         self.simulation_time = 0
 
+        self.statistics = {}
         self.total_vehicles = deque(maxlen=20)
         self.connection.simulation.subscribe([
             0x73,  # VAR_DEPARTED_VEHICLES_NUMBER
@@ -89,14 +90,23 @@ class Collaborator:
         observations = self.compute_observations()
         rewards = self.compute_rewards()
         done = {'__all__': self.is_finished()}
-        info = {}
+        info = {}  # self._collect_statistics()
 
         return observations, rewards, done, info
 
     def _collect_simulation_results(self):
+        subscription = self.connection.simulation.getSubscriptionResults()
+
         # Update the sum of departed and arrived vehicles
         self.total_vehicles.append(
-            sum(self.connection.simulation.getSubscriptionResults().values()))
+            subscription[0x73] + subscription[0x79])
+
+        # Update statistics
+        for k, v in subscription.items():
+            if k in self.statistics:
+                self.statistics[k] += v
+            else:
+                self.statistics[k] = v
 
         # Accumulate all the rewards
         for trafficlight in self.trafficlights.values():
@@ -168,6 +178,19 @@ class Collaborator:
         for trafficlight_id, trafficlight in self.trafficlights.items():
             rewards[trafficlight_id] = trafficlight.get_throughput()
         return rewards
+
+    def _collect_statistics(self):
+        r""" Actually collects all statistics of the simulation that can be collected.
+
+        Returns:
+            statistics (dict): Dictionary with information about the simulation.
+        """
+        d = self.statistics
+        return {
+            'VAR_DEPARTED_VEHICLES_NUMBER': d[0x73],
+            'VAR_ARRIVED_VEHICLES_NUMBER': d[0x79],
+            'TIMESTAMP': self.simulation_time,
+        }
 
     def close(self):
         self.connection.close()
