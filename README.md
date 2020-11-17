@@ -60,6 +60,18 @@ started, the reinforcement learning agent can start to interact with the environ
 function repeatedly, passing in a joint action. The actions are applied to the system, then the simulation is
 progressed one step further, and the result of the simulation step is returned back to the agent.
 
+### Intersection observation
+
+The intersection defined in the sumo network configuration is represented as a 1 or 0 valued matrix.
+An example of how an agent see the environment shown below.
+
+<p align="center">
+  <img src="https://i.ibb.co/KXz5W33/Int-Sim.png" width="40%" height="40%">
+  <img src="https://i.ibb.co/GJ8S5z8/Int-Internal.png" width="40%" height="40%">
+</p>
+
+### Internal network representation
+
 The internal representation of a road network definition is a JSON object and its schema is presented below.
 The keys of the JSON object store information about the relative position of lanes, which constitute the
 observed part of the road network. The intersection is split into several segments, one for each side of
